@@ -9,7 +9,7 @@ export const loader = async () => {
   // const searchId = '/';
   // const response = await axios.get(`${graveUrl}${searchId}`);
   // return { graves: response.data, searchId };
-  return { graves: tempData };
+  return { graves: tempData.graves };
 };
 
 const Landing = () => {

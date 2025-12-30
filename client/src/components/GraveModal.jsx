@@ -66,7 +66,6 @@ const DateText = styled.p`
 `;
 
 const Epitaph = styled.div`
-  font-style: italic;
   line-height: 1.8;
   color: #34495e;
   text-align: center;
