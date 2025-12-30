@@ -1,6 +1,6 @@
 export { default as Landing } from './Landing';
-export { default as Grave } from './Grave';
-export { default as Bag } from './Bag';
+export { default as GraveModal } from './GraveModal';
+export { default as Inventory } from './Inventory';
 export { default as Apply } from './Apply';
 export { default as HomeLayout } from './HomeLayout';
 export { default as Error } from './Error';

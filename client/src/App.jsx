@@ -1,15 +1,14 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import {
   HomeLayout,
-  Bag,
+  Inventory,
   Landing,
   Error,
   Apply,
-  Grave,
+  GraveModal,
   SinglePageError,
 } from './pages';
 import { loader as landingLoader } from './pages/Landing.jsx';
-import GraveModal from './components/GraveModal.jsx';
 
 const router = createBrowserRouter([
   {
@@ -32,8 +31,8 @@ const router = createBrowserRouter([
       },
 
       {
-        path: 'Bag',
-        element: <Bag />,
+        path: 'Inventory',
+        element: <Inventory />,
       },
       {
         path: 'Apply',
