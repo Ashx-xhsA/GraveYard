@@ -1,0 +1,92 @@
+{
+  "graves": [
+    {
+      "id": "1",
+      "graveID": "SY-1",
+      "name": "小空的有线耳机",
+      "birth": "2025-03-12",
+      "death": "2025-12-07",
+      "epitaph": "我在洗衣机里一点也不害怕",
+      "burial": {
+        "display_name": "洗衣机",
+        "address": "Brookline, Boston",
+        "coordinates": {
+          "lat": 42.33,
+          "lng": -71.12
+        }
+      },
+      "memorial": "辛苦的一生，但也有许多欢乐...耳机酱这辈子最喜欢的歌曲是andymori的革命",
+      "photos": [
+        "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/MMTN2"
+      ],
+      "interaction": {
+        "stats": {
+          "totalFlowers": 1,
+          "totalMessages": 1
+        },
+        "history": [
+          {
+            "id": "int_001",
+            "type": "flower",
+            "variety": "紫色的牵牛花",
+            "user": "空",
+            "timestamp": "1767020674",
+            "quantity": 1
+          },
+          {
+            "id": "int_002",
+            "type": "message",
+            "variety": " ",
+            "user": "空",
+            "content": "rip",
+            "timestamp": "1767020838"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "graveID": "SY-2",
+      "name": "墙外世界的幻想",
+      "birth": "2000-1-1",
+      "death": "2013-04-28",
+      "epitaph": "原来海的那边不仅有自由，还有敌人",
+      "burial": {
+        "display_name": "艾尔迪亚岛",
+        "address": "/",
+        "coordinates": {
+          "lat": "/",
+          "lng": "/"
+        }
+      },
+      "memorial": "墙外有燃烧的水，冰做的土地，沙子做的雪原。",
+      "photos": [
+        "https://static.wikia.nocookie.net/shingekinokyojin/images/e/e2/The_Walls.png/revision/latest/scale-to-width-down/1000?cb=20200308210427"
+      ],
+      "interaction": {
+        "stats": {
+          "totalFlowers": 999,
+          "totalMessages": 1
+        },
+        "history": [
+          {
+            "id": "int_001",
+            "type": "flower",
+            "variety": "地鸣",
+            "user": "艾伦",
+            "timestamp": "1767027065",
+            "quantity": 999
+          },
+          {
+            "id": "int_002",
+            "type": "message",
+            "variety": " ",
+            "user": "埃尔文",
+            "content": "父亲的理论是对的......",
+            "timestamp": "1767027121"
+          }
+        ]
+      }
+    }
+  ]
+}
