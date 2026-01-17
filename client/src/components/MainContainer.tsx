@@ -2,9 +2,9 @@ import { useLoaderData } from 'react-router-dom';
 import tempData from '../../db.json';
 import { useState } from 'react';
 import { useGraveData } from '../hooks/useGraveData';
-import { SingleGrave } from './index';
 import GraveList from './GraveList';
 import { useAuth } from '../context/AuthContext';
+import GraveInfo from './GraveInfo';
 
 export const loader = async ({ params }: any) => {
   // const { id } = params;
@@ -49,7 +49,7 @@ const MainContainer = () => {
       style={{ flex: 1 }}
     >
       {type === 'detail' ? (
-        <SingleGrave graveid={data[0]} />
+        <GraveInfo />
       ) : (
         <>
           <GraveList

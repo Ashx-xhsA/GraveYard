@@ -16,7 +16,6 @@ const GraveList = ({ currentGraves, randomIndices, isRightPanelShow }) => {
           : {}
       }
     >
-      {/* GraveList */}
       {currentGraves.map((item, index) => {
         let gridStyle = {};
         if (screenSize === 'lg') {
@@ -29,7 +28,7 @@ const GraveList = ({ currentGraves, randomIndices, isRightPanelShow }) => {
 
         return (
           <div key={item.id} style={gridStyle}>
-            <GraveIcon {...item} />
+            <GraveIcon graveData={item} />
           </div>
         );
       })}

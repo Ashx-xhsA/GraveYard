@@ -1,8 +1,9 @@
 {
   "graves": [
     {
-      "id": "1",
-      "graveID": "SY-1",
+      "id": "grave_1",
+      "gyid": "sea-1",
+      "indexInGy": "1",
       "name": "小空的有线耳机",
       "birth": "2025-03-12",
       "death": "2025-12-07",
@@ -45,8 +46,9 @@
       }
     },
     {
-      "id": "2",
-      "graveID": "SY-2",
+      "id": "grave_2",
+      "gyid": "sea-1",
+      "indexInGy": "2",
       "name": "墙外世界的幻想",
       "birth": "2000-1-1",
       "death": "2013-04-28",
@@ -89,8 +91,10 @@
       }
     },
     {
-      "id": "3",
-      "graveID": "SY-3",
+      "id": "grave_3",
+      "gyid": "sea-1",
+      "indexInGy": "3",
+
       "name": "墙外世界的幻想",
       "birth": "2000-1-1",
       "death": "2013-04-28",
@@ -133,8 +137,9 @@
       }
     },
     {
-      "id": "4",
-      "graveID": "SY-4",
+      "id": "grave_4",
+      "gyid": "sea-1",
+      "indexInGy": "4",
       "name": "墙外世界的幻想",
       "birth": "2000-1-1",
       "death": "2013-04-28",

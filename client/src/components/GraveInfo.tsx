@@ -1,0 +1,78 @@
+import { useLoaderData } from 'react-router-dom';
+
+const GraveInfo = () => {
+  const { data } = useLoaderData();
+  const [graveid, graveData] = data;
+
+  const {
+    birth,
+    death,
+    epitaph,
+    memorial,
+    photos,
+    burial,
+    interaction,
+    name,
+    indexInGy,
+    gyid,
+    id,
+  } = graveData;
+
+  return (
+    <div id="single-grave-container">
+      {/* grave information container */}
+      <div id="grave-info-container">
+        <div id="grave-title-container">
+          <h1>{name}</h1>
+          <span>
+            {' '}
+            {birth} --- {death}{' '}
+          </span>
+        </div>
+        <div id="grave-info-img-container">
+          <img src={photos[0]} alt={name} />
+        </div>
+
+        <div id="grave-info-content">
+          <div className="info-item">
+            <span className="info-label">EPITAPH</span>
+            <span className="info-value">{epitaph}</span>
+          </div>
+          <div className="info-item">
+            <span className="info-label">MEMORIAL</span>
+            <span className="info-value">{memorial}</span>
+          </div>
+          <div className="info-item">
+            <span className="info-label">BURIAL</span>
+            <span className="info-value">{burial.display_name}</span>
+          </div>
+          <div className="info-item">
+            <span className="info-label">ADDRESS</span>
+            <span className="info-value">{burial.address}</span>
+          </div>
+          <div className="info-item">
+            <span className="info-label">COORDINATES</span>
+            <span className="info-value">
+              {burial.coordinates.lat}, {burial.coordinates.lng}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* grave interaction container */}
+      <div id="grave-interaction-container">
+        <div id="grave-interaction-stats">
+          <p>{interaction.stats.totalFlowers}</p>
+          <p>{interaction.stats.totalMessages}</p>
+          <p>{interaction.history.map((item: any) => item.type)}</p>
+          <p>{interaction.history.map((item: any) => item.variety)}</p>
+          <p>{interaction.history.map((item: any) => item.user)}</p>
+          <p>{interaction.history.map((item: any) => item.timestamp)}</p>
+          <p>{interaction.history.map((item: any) => item.quantity)}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GraveInfo;

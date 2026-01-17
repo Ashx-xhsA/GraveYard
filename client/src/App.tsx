@@ -17,11 +17,6 @@ const router = createBrowserRouter([
         element: <MainContainer />,
         loader: mainContainerLoader,
       },
-      {
-        path: ':graveid',
-        element: <MainContainer />,
-        loader: mainContainerLoader,
-      },
 
       {
         path: ':gyid',
