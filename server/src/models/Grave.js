@@ -31,8 +31,13 @@ const graveSchema = new mongoose.Schema(
     memorial: String,
     photos: [String],
     // Interaction
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("Grave", graveSchema);
