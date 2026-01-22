@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const interactionSchema = new mongoose.Schema({
-  grave: {
+  graveId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Grave",
     required: true,
