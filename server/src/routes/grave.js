@@ -143,7 +143,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
     }
     await Interaction.deleteMany({ graveId: grave._id });
     await grave.remove();
-    return res.json({ message: "Your grave has been deleted.", grave });
+    return res.json({ message: "Your grave has been removed.", grave });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error." });
