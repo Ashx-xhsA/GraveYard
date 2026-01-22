@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 
-const interactionSchema = new mongoose.Schema({
-  graveId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Grave",
-    required: true,
+const interactionSchema = new mongoose.Schema(
+  {
+    graveId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Grave",
+      required: true,
+    },
+    type: { type: String, enum: ["flower", "message"], required: true },
+    variety: String,
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
-  type: { type: String, enum: ["flower", "message"], required: true },
-  variety: String,
-  user: { type: String, required: true },
-  timestamp: { type: Number, default: () => Math.floor(Date.now() / 1000) },
-  quantity: Number,
-  content: String,
-});
+  { timestamps: true },
+);
 
 export default mongoose.model("Interaction", interactionSchema);

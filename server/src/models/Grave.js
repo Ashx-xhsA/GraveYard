@@ -31,7 +31,7 @@ const graveSchema = new mongoose.Schema(
     memorial: String,
     photos: [String],
     // Interaction
-    createdBy: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

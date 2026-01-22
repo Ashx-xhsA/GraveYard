@@ -19,7 +19,7 @@ const getGraveStats = async (graveId) => {
 };
 
 // Get all interactions for a grave
-router.get("/", async (req, res) => {
+router.get("/:graveId/interactions", async (req, res) => {
   try {
     const { graveId } = req.params;
     const interactions = await Interaction.find({ graveId })
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
 });
 
 // Post a flower to a grave
-router.post("/flowers", verifyToken, async (req, res) => {
+router.post("/:graveId/flowers", verifyToken, async (req, res) => {
   try {
     const { graveId } = req.params;
     const { variety, quantity = 1 } = req.body;
@@ -67,7 +67,7 @@ router.post("/flowers", verifyToken, async (req, res) => {
 });
 
 // Post a message to a grave
-router.post("/messages", verifyToken, async (req, res) => {
+router.post("/:graveId/messages", verifyToken, async (req, res) => {
   try {
     const { graveId } = req.params;
     const { content } = req.body;
@@ -100,35 +100,39 @@ router.post("/messages", verifyToken, async (req, res) => {
 });
 
 // Delete an interaction
-router.delete("/:interactionId", verifyToken, async (req, res) => {
-  try {
-    const { graveId, interactionId } = req.params;
-    const grave = await Grave.findById(graveId);
-    if (!grave) return res.status(404).json({ error: "Grave not found." });
-    const interaction = await Interaction.findById(interactionId);
-    if (!interaction)
-      return res.status(404).json({ error: "Interaction not found." });
-    if (interaction.user.toString() !== req.userId) {
-      return res
-        .status(403)
-        .json({ error: "You can only take back your own interactions." });
+router.delete(
+  "/:graveId/interactions/:interactionId",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const { graveId, interactionId } = req.params;
+      const grave = await Grave.findById(graveId);
+      if (!grave) return res.status(404).json({ error: "Grave not found." });
+      const interaction = await Interaction.findById(interactionId);
+      if (!interaction)
+        return res.status(404).json({ error: "Interaction not found." });
+      if (interaction.user.toString() !== req.userId) {
+        return res
+          .status(403)
+          .json({ error: "You can only take back your own interactions." });
+      }
+      await interaction.deleteOne();
+      const stats = await getGraveStats(graveId);
+      const history = await Interaction.find({ graveId })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .populate("user", "username");
+      grave.interaction = { stats, history };
+      await grave.save();
+      return res.json({
+        message: "You have taken back your interaction.",
+        graveStats: stats,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal server error." });
     }
-    await interaction.deleteOne();
-    const stats = await getGraveStats(graveId);
-    const history = await Interaction.find({ graveId })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .populate("user", "username");
-    grave.interaction = { stats, history };
-    await grave.save();
-    return res.json({
-      message: "You have taken back your interaction.",
-      graveStats: stats,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error." });
-  }
-});
+  },
+);
 
 export default router;

@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
     const limitNum = Number(limit);
     const query = search ? { name: { $regex: search, $options: "i" } } : {};
     const graves = await Grave.find(query)
-      .populate("createdBy", "username")
+      .populate("user", "username")
       .limit(limitNum)
       .skip((pageNum - 1) * limitNum)
       .sort({ createdAt: -1 });
@@ -57,10 +57,10 @@ router.get("/", async (req, res) => {
 });
 
 // Get single grave by ID
-router.get("/:id", async (req, res) => {
+router.get("/:graveId", async (req, res) => {
   try {
-    const grave = await Grave.findById(req.params.id).populate(
-      "createdBy",
+    const grave = await Grave.findById(req.params.graveId).populate(
+      "user",
       "username",
     );
     if (!grave) {
@@ -93,7 +93,7 @@ router.post("/", verifyToken, async (req, res) => {
       burial,
       memorial,
       photos: photos || [],
-      createdBy: req.userId,
+      user: req.userId,
     });
     await grave.save();
     const populatedGrave = await populateInteractions(grave);
@@ -105,13 +105,13 @@ router.post("/", verifyToken, async (req, res) => {
 });
 
 // Update grave
-router.put("/:id", verifyToken, async (req, res) => {
+router.put("/:graveId", verifyToken, async (req, res) => {
   try {
-    const grave = await Grave.findById(req.params.id);
+    const grave = await Grave.findById(req.params.graveId);
     if (!grave) {
       return res.status(404).json({ error: "Grave not found." });
     }
-    if (grave.createdBy.toString() !== req.userId) {
+    if (grave.user.toString() !== req.userId) {
       return res.status(403).json({ error: "This is someone else's grave." });
     }
     const { name, birth, death, epitaph, burial, memorial, photos } = req.body;
@@ -132,17 +132,17 @@ router.put("/:id", verifyToken, async (req, res) => {
 });
 
 // Delete grave
-router.delete("/:id", verifyToken, async (req, res) => {
+router.delete("/:graveId", verifyToken, async (req, res) => {
   try {
-    const grave = await Grave.findById(req.params.id);
+    const grave = await Grave.findById(req.params.graveId);
     if (!grave) {
       return res.status(404).json({ error: "Grave not found." });
     }
-    if (grave.createdBy.toString() !== req.userId) {
+    if (grave.user.toString() !== req.userId) {
       return res.status(403).json({ error: "This is someone else's grave." });
     }
     await Interaction.deleteMany({ graveId: grave._id });
-    await grave.remove();
+    await grave.deleteOne();
     return res.json({ message: "Your grave has been removed.", grave });
   } catch (error) {
     console.error(error);
