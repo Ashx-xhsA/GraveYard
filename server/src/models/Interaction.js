@@ -9,6 +9,8 @@ const interactionSchema = new mongoose.Schema(
     },
     type: { type: String, enum: ["flower", "message"], required: true },
     variety: String,
+    quantity: Number,
+    content: String,
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true },
