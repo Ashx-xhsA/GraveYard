@@ -8,7 +8,6 @@ const HeaderIconContainer = () => {
       id="headerIconContainer"
       className="flex flex-row justify-between gap-2"
     >
-      // Add search icon and input field
       <button id="SettingsButton" className="header-icon-button">
         Settings
       </button>

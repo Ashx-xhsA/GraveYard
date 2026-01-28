@@ -1,5 +1,5 @@
 import RootLayout from './components/RootLayout';
-import { MainContainer } from './components';
+import { MainContainer, About } from './components';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { loader as mainContainerLoader } from './components/MainContainer';
 import { AuthProvider } from './context/AuthContext';
@@ -28,7 +28,13 @@ const router = createBrowserRouter([
         element: <MainContainer />,
         loader: mainContainerLoader,
       },
+     
     ],
+  },
+  {
+    path: 'about',
+    element: <About />,
+    
   },
 ]);
 const App = () => {
