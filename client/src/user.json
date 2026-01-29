@@ -1,0 +1,22 @@
+{
+  "user": {
+    "id": "u_12345",
+    "username": "AAA",
+    "email": "AAA@gmail.com",
+    "gravesCreated": 5,
+    "flowersBalance": 12,
+    "favorites": [
+      "g_12345",
+      "g_12346",
+      "g_12347",
+      "g_12348",
+      "g_12349",
+      "g_12350",
+      "g_12351",
+      "g_12352",
+      "g_12353",
+      "g_12354",
+      "g_12355"
+    ]
+  }
+}

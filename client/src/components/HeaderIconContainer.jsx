@@ -1,7 +1,7 @@
 import { useAuth } from '../context/AuthContext';
 
 const HeaderIconContainer = () => {
-  const { isRightPanelShow, toggleRightPanel } = useAuth();
+  const { isLoggedIn, login, logout } = useAuth();
 
   return (
     <div
@@ -17,9 +17,9 @@ const HeaderIconContainer = () => {
       <button
         id="LoginButton"
         className="header-icon-button"
-        onClick={toggleRightPanel}
+        onClick={isLoggedIn ? logout : login}
       >
-        {isRightPanelShow ? 'Logout' : 'Login'}
+        {isLoggedIn ? 'Logout' : 'Login'}
       </button>
     </div>
   );

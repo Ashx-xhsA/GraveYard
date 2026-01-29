@@ -1,4 +1,9 @@
 {
+  "graveyard": {
+    "id": "sea-1",
+    "name": "Sea Graveyard",
+    "backgroundImage": "/themes/FishInSea.png"
+  },
   "graves": [
     {
       "id": "grave_1",

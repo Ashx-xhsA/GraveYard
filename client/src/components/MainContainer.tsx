@@ -1,4 +1,5 @@
 import { useLoaderData } from 'react-router-dom';
+import { IoMenuSharp } from "react-icons/io5";
 import tempData from '../../db.json';
 import { useState } from 'react';
 import { useGraveData } from '../hooks/useGraveData';
@@ -18,24 +19,26 @@ export const loader = async ({ params }: any) => {
   //   return { type: 'list', data: graves };
   // }
   const { graveid } = params;
+  const graveyard = tempData.graveyard;
   if (graveid) {
     const grave = tempData.graves.find((grave) => grave.id === graveid);
     console.log('there is a graveid');
-    return { type: 'detail', data: [graveid, grave] };
+    return { type: 'detail', data: [graveid, grave], graveyard };
   } else {
-    return { type: 'list', data: tempData.graves };
+    return { type: 'list', data: tempData.graves, graveyard };
   }
 };
 
 interface LoaderData {
   type: 'detail' | 'list';
   data: any;
+  graveyard: any;
 }
 
 const MainContainer = () => {
-  const { type, data } = useLoaderData() as LoaderData;
+  const { type, data, graveyard } = useLoaderData() as LoaderData;
   const [currentPage, setCurrentPage] = useState(0);
-  const { isRightPanelShow } = useAuth();
+  const { isRightPanelShow, toggleRightPanel } = useAuth();
   const { currentGraves, randomIndices, totalPages } = useGraveData(
     type === 'list' ? data : [],
     currentPage,
@@ -44,10 +47,21 @@ const MainContainer = () => {
 
   return (
     <div
-      className="h-full borderDecoration"
+      className="h-full borderDecoration relative"
       id="main-container"
-      style={{ flex: 1 }}
+      style={{ 
+        flex: 1,
+        backgroundImage: type === 'list' && graveyard?.backgroundImage ? `url(${graveyard.backgroundImage})` : undefined
+      }}
     >
+      <button
+        id="toggle-right-panel-button"
+        onClick={toggleRightPanel}
+        className="absolute top-4 right-4 z-10 text-xl cursor-pointer bg-transparent border-None"
+        
+      >
+        <IoMenuSharp />
+      </button>
       {type === 'detail' ? (
         <GraveInfo />
       ) : (
