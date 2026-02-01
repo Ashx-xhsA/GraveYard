@@ -1,0 +1,59 @@
+/* ====================== */
+/* Global / Layout / Reset */
+/* ====================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'MS PGothic', 'Pixelify Sans', sans-serif;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+:root {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.borderDecoration {
+  border: 20px solid transparent;
+  border-image: var(--border-image-url) 10 repeat !important;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+#background {
+  background-image: var(--bg-img-url);
+  background-size: var(--bg-stretch-size);
+  image-rendering: pixelated;
+}
+
+#layout {
+  display: flex;
+  margin: 0 auto;
+  max-width: var(--layout-max-width);
+  width: 100%;
+  flex-direction: row;
+}
+
+#content {
+  padding-top: 8px;
+}
+
+@media (max-width: 639px) {
+  #layout {
+    flex-direction: column;
+  }
+}

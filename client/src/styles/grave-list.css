@@ -1,0 +1,60 @@
+/* ====================== */
+/* Grave List */
+/* ====================== */
+
+#grave-list-container {
+  border-top: none;
+  height: var(--grave-list-height);
+  padding: 1.5rem;
+
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.grave-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* max-width: 100%; */
+
+  animation: playSprite 1s steps(1, end) infinite;
+}
+
+.grave-icon-text {
+  text-align: center;
+  font-size: 1rem;
+  /* font-weight: bold; */
+  color: white;
+  text-shadow: -1px 1px 0px var(--header-icon-button-text-shadow-color);
+}
+
+@keyframes playSprite {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+}
+
+@media (max-width: 1023px) {
+  #grave-list-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 639px) {
+  #grave-list-container {
+    width: 100%;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    overflow-y: auto;
+  }
+}

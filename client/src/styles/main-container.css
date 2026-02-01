@@ -1,0 +1,29 @@
+/* ====================== */
+/* Main Container */
+/* ====================== */
+
+#main-container {
+  display: flex;
+  flex-direction: column;
+  height: var(--layout-height);
+  border-top: none;
+  width: calc(100% - var(--right-panel-width));
+
+  background-image: var(--grave-yard-bg-img-url);
+  background-size: var(--bg-stretch-size);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#pagination-container {
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 639px) {
+  #main-container {
+    width: 100%;
+  }
+}

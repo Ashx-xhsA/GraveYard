@@ -1,0 +1,52 @@
+/* ====================== */
+/* CSS Variables */
+/* ====================== */
+:root {
+  --bg-stretch-size: 210px;
+  --bg-overlay-color: black;
+  --bg-overlay-opacity: 0.352;
+
+  --content-transition: opacity 0.3s ease;
+
+  /* Image URLs */
+  --bg-img-url: url('/themes/containerbg.png');
+  /* --bg-img-url: url('/themes/containerbg-2.png'); */
+  --header-bg-img-url: url('/themes/containerbg.png');
+  --header-logo-img-url: url('/graveyardLogoTrimmed.png');
+  --border-image-url: url('/themes/border.png');
+  /* --grave-yard-bg-img-url: url('/themes/FishInSea.png'); */
+  --grave-yard-bg-img-url: url('/themes/IMG_7436.PNG');
+  --grave-img-url: url('/grave-1.png');
+
+  /* Layout */
+  --header-max-width: 980px;
+  --layout-max-width: 980px;
+  --header-min-height: 48px;
+
+  --right-panel-width: 284px;
+
+  --header-img-ratio: 87 /14;
+  --header-img-height: 40px;
+
+  --layout-height: 660px;
+  --grave-list-height: 600px;
+
+  /* Colors */
+  --header-icon-button-text-color: rgb(119, 89, 114);
+  --header-icon-button-background-color: rgb(249, 228, 246);
+  --header-icon-button-text-shadow-color: white;
+
+
+  --single-grave-background-color: rgb(225, 224, 224);
+  --grave-info-text-color: rgb(0, 0, 0);
+
+  
+  --footer-text-color: rgb(68, 76, 91);
+  --user-info-text-color: rgb(255, 255, 255);
+  --user-info-text-shadow-color: rgb(79, 83, 86);
+  --favorites-text-color: rgb(255, 255, 255);
+  --favorites-text-shadow-color: rgb(79, 83, 86);
+  --right-panel-close-button-color: rgb(255, 255, 255);
+  --toggle-right-panel-button-color: rgb(255, 255, 255);
+}
+/* ====================== */

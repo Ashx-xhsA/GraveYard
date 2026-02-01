@@ -1,0 +1,36 @@
+/* ====================== */
+/* Footer */
+/* ====================== */
+#footer {
+  margin-top: 1.5rem;
+  padding-bottom: 2rem;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--footer-text-color);
+}
+
+#footerText {
+  margin-bottom: 1.5rem;
+}
+
+#footerLinkContainer {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.footer-link {
+  font-weight: 1000;
+  text-shadow: -2px 1px 0px var(--header-icon-button-text-shadow-color);
+  padding: 0.5rem;
+  color: var(--footer-text-color);
+}
+
+.footer-link:hover {
+  transform: scale(1.7);
+  transition: transform 0.125s cubic-bezier(0.7, 0, 0.7, 1.5);
+}
+
+#footerCopyright {
+  margin-bottom: 5rem;
+}

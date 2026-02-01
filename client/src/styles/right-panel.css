@@ -1,0 +1,113 @@
+/* ====================== */
+/* Right Panel */
+/* ====================== */
+
+#toggle-right-panel-button {
+  color: var(--toggle-right-panel-button-color);
+}
+#toggle-right-panel-button:hover {
+  transform: scale(1.5);
+  transition: transform 0.125s cubic-bezier(0.7, 0, 0.7, 1.5);
+}
+
+#right-panel {
+  width: var(--right-panel-width);
+  border-top: none;
+  border-left: none;
+  
+  height: var(--layout-height);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#info {
+  height: 200px;
+  flex: 0 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 1rem 1rem;
+
+  color: var(--user-info-text-color);
+  text-shadow: 1px 1px 0px var(--user-info-text-shadow-color);
+  
+  font-size: 1.2rem;
+}
+
+#favorites {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+  text-align: left;
+  padding-left: 2rem;
+  color: var(--favorites-text-color);
+  text-shadow: 1px 1px 0px var(--favorites-text-shadow-color);
+}
+
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 1rem;
+  margin-top: 1rem;
+  overflow-y: auto;
+}
+
+.favorite-item {
+  text-align: left;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.favorites-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+#right-panel-close-button-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem 0 0;
+}
+
+#right-panel-close-button:hover {
+  transform: scale(1.5);
+  transition: transform 0.125s cubic-bezier(0.7, 0, 0.7, 1.5);
+}
+
+#right-panel-close-button {
+  color: var(--right-panel-close-button-color);
+
+  cursor: pointer;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 639px) {
+  #right-panel-close-button-container {
+    display: none;
+  }
+  #right-panel {
+    height: auto;
+    width: 100%;
+    border-left: 20px solid transparent;
+    border-image: var(--border-image-url) 10 repeat !important;
+    flex-direction: row;
+  }
+  .favorites-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

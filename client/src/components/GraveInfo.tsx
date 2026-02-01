@@ -22,40 +22,35 @@ const GraveInfo = () => {
     <div id="single-grave-container">
       {/* grave information container */}
       <div id="grave-info-container">
-        <div id="grave-title-container">
-          <h1>{name}</h1>
-          <span>
-            {' '}
-            {birth} --- {death}{' '}
-          </span>
-        </div>
         <div id="grave-info-img-container">
           <img src={photos[0]} alt={name} />
         </div>
+        <div id="grave-title-container">
+        <h1>{name}</h1>
+        <span>
+          {' '}
+          {birth} --- {death}{' '}
+        </span>
+      </div>
 
-        <div id="grave-info-content">
-          <div className="info-item">
-            <span className="info-label">EPITAPH</span>
+      <div id="grave-info-content">
+        <div className="info-item">
+          {/*墓志铭 */}
+          {/* <span className="info-label">EPITAPH</span> */}
             <span className="info-value">{epitaph}</span>
           </div>
-          <div className="info-item">
-            <span className="info-label">MEMORIAL</span>
+        <div className="info-item">
+            {/* 墓碑文 */}
+            {/* <span className="info-label">MEMORIAL</span> */}
             <span className="info-value">{memorial}</span>
           </div>
-          <div className="info-item">
-            <span className="info-label">BURIAL</span>
+        <div className="info-item">
+            {/* 墓碑位置 */}
+            {/* <span className="info-label">BURIAL</span> */}
             <span className="info-value">{burial.display_name}</span>
           </div>
-          <div className="info-item">
-            <span className="info-label">ADDRESS</span>
-            <span className="info-value">{burial.address}</span>
-          </div>
-          <div className="info-item">
-            <span className="info-label">COORDINATES</span>
-            <span className="info-value">
-              {burial.coordinates.lat}, {burial.coordinates.lng}
-            </span>
-          </div>
+         
+          
         </div>
       </div>
 
