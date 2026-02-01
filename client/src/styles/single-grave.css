@@ -78,6 +78,11 @@
   justify-content: center;
 }
 #grave-interaction-container {
+  border-top: 20px solid transparent;
+  border-image: var(--single-grave-seperator-image-url) 10 repeat !important;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  
   width: 100%;
   display: flex;
 }

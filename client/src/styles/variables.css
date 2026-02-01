@@ -18,6 +18,8 @@
   --grave-yard-bg-img-url: url('/themes/IMG_7436.PNG');
   --grave-img-url: url('/grave-1.png');
 
+  --single-grave-seperator-image-url: url('/themes/border.png');
+
   /* Layout */
   --header-max-width: 980px;
   --layout-max-width: 980px;
