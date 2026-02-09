@@ -50,5 +50,15 @@
   --favorites-text-shadow-color: rgb(79, 83, 86);
   --right-panel-close-button-color: rgb(255, 255, 255);
   --toggle-right-panel-button-color: rgb(255, 255, 255);
+
+  --interaction-item-underline-color: rgb(119, 89, 114);
+  --interaction-item-text-color: rgb(72, 86, 100);
+
+  --interaction-paginate-link-color: rgb(72, 86, 100);
+  --interaction-paginate-link-hover-background-color:rgba(119, 89, 114, 0.1);
+  --interaction-paginate-link-selected-color: rgb(255, 255, 255);
+  --interaction-paginate-link-selected-background-color: rgb(119, 89, 114);
+
+  /* Numbers */
+  --items-per-page: 10;
 }
-/* ====================== */

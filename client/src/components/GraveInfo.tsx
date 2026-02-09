@@ -1,4 +1,5 @@
 import { useLoaderData } from 'react-router-dom';
+import InteractionPaginateContainer from './InteractionPaginateContainer';
 
 const GraveInfo = () => {
   const { data } = useLoaderData();
@@ -56,15 +57,9 @@ const GraveInfo = () => {
 
       {/* grave interaction container */}
       <div id="grave-interaction-container">
-        <div id="grave-interaction-stats">
-          <p>{interaction.stats.totalFlowers}</p>
-          <p>{interaction.stats.totalMessages}</p>
-          <p>{interaction.history.map((item: any) => item.type)}</p>
-          <p>{interaction.history.map((item: any) => item.variety)}</p>
-          <p>{interaction.history.map((item: any) => item.user)}</p>
-          <p>{interaction.history.map((item: any) => item.timestamp)}</p>
-          <p>{interaction.history.map((item: any) => item.quantity)}</p>
-        </div>
+  
+  
+          <InteractionPaginateContainer interaction={interaction} itemsPerPage={10} name={name} />
       </div>
     </div>
   );
