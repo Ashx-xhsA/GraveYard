@@ -23,10 +23,6 @@ const graveSchema = new mongoose.Schema(
     burial: {
       display_name: String,
       address: String,
-      coordinates: {
-        lat: Number,
-        lng: Number,
-      },
     },
     memorial: String,
     photos: [String],
