@@ -6,7 +6,7 @@ import { verifyToken } from "../middleware/auth.js";
 const router = express.Router();
 
 // Helper function to fill up interaction field in graves
-const populateInteractions = async (grave) => {
+export const populateInteractions = async (grave) => {
   if (!grave) return null;
   const interactions = await Interaction.find({ graveId: grave._id }).sort({
     createdAt: 1,
@@ -31,11 +31,10 @@ const populateInteractions = async (grave) => {
 // Get all graves
 router.get("/", async (req, res) => {
   try {
-    const { search, page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10 } = req.query;
     const pageNum = Number(page);
     const limitNum = Number(limit);
-    const query = search ? { name: { $regex: search, $options: "i" } } : {};
-    const graves = await Grave.find(query)
+    const graves = await Grave.find()
       .populate("user", "username")
       .limit(limitNum)
       .skip((pageNum - 1) * limitNum)
@@ -43,7 +42,7 @@ router.get("/", async (req, res) => {
     const populatedGraves = await Promise.all(
       graves.map((grave) => populateInteractions(grave)),
     );
-    const total = await Grave.countDocuments(query);
+    const total = await Grave.countDocuments();
     return res.json({
       graves: populatedGraves,
       totalPages: Math.ceil(total / limitNum),
