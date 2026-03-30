@@ -1,9 +1,14 @@
-import React from 'react';
 import GraveIcon from './GraveIcon';
 import { Outlet } from 'react-router-dom';
 import { useScreenSize } from '../hooks/useScreenSize';
 
-const GraveList = ({ currentGraves, randomIndices, isRightPanelShow }) => {
+interface GraveListProps {
+  currentGraves: any[];
+  randomIndices: number[];
+  isRightPanelShow: boolean;
+}
+
+const GraveList = ({ currentGraves, randomIndices, isRightPanelShow }: GraveListProps) => {
   const screenSize = useScreenSize();
   const cols = !isRightPanelShow ? 4 : 3;
 
@@ -16,7 +21,7 @@ const GraveList = ({ currentGraves, randomIndices, isRightPanelShow }) => {
           : {}
       }
     >
-      {currentGraves.map((item, index) => {
+      {currentGraves.map((item: any, index: number) => {
         let gridStyle = {};
         if (screenSize === 'lg') {
           const posIndex = randomIndices[index];
@@ -27,7 +32,7 @@ const GraveList = ({ currentGraves, randomIndices, isRightPanelShow }) => {
         }
 
         return (
-          <div key={item.id} style={gridStyle}>
+          <div key={item._id || item.id} style={gridStyle}>
             <GraveIcon graveData={item} />
           </div>
         );
