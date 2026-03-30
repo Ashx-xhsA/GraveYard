@@ -5,20 +5,15 @@ import {
   Footer,
   RightPanel,
 } from './index';
-import { Outlet, useRouteLoaderData } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import user from '../user.json';
 
 export const rootLoader = () => {
-  // const { user } = useAuth();
-  return {
-    user
-  };
+  return null;
 };
 
 const RootLayout = () => {
-  const { isRightPanelShow } = useAuth();
-  const { user } = useRouteLoaderData('root');
+  const { isRightPanelShow, user } = useAuth();
 
   return (
     <>

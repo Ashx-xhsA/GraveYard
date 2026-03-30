@@ -1,12 +1,9 @@
-import React from 'react';
-
 const Info = ({ user }: { user: any }) => {
-    console.log(user);
   return (
     <div id="info">
       <p>Name: {user.username}</p>
-      <p>Graves Created: {user.gravesCreated}</p>
-      <p>Flowers Balance: {user.flowersBalance}</p>
+      <p>Graves Created: {user.gravesCreated ?? 0}</p>
+      <p>Interactions: {user.interactionsMade ?? 0}</p>
     </div>
   );
 };
