@@ -9,7 +9,7 @@ const HeaderIconContainer = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -18,7 +18,7 @@ const HeaderIconContainer = () => {
       setShowLogin(false);
       setUsername('');
       setPassword('');
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed');
     } finally {
       setLoading(false);
@@ -57,7 +57,11 @@ const HeaderIconContainer = () => {
         <form
           onSubmit={handleSubmit}
           className="absolute top-full right-0 mt-2 p-4 z-50 flex flex-col gap-2"
-          style={{ background: 'rgb(249, 228, 246)', border: '2px solid #333', minWidth: '200px' }}
+          style={{
+            background: 'rgb(249, 228, 246)',
+            border: '2px solid #333',
+            minWidth: '200px',
+          }}
         >
           <input
             type="text"
@@ -76,7 +80,11 @@ const HeaderIconContainer = () => {
             required
           />
           {error && <p className="text-red-600 text-xs">{error}</p>}
-          <button type="submit" className="header-icon-button" disabled={loading}>
+          <button
+            type="submit"
+            className="header-icon-button"
+            disabled={loading}
+          >
             {loading ? '...' : 'Login'}
           </button>
         </form>
