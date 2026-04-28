@@ -1,4 +1,3 @@
-import React from 'react';
 import HeaderLogoContainer from './HeaderLogoContainer';
 import HeaderIconContainer from './HeaderIconContainer';
 

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import api from '../api';
 
 interface User {
@@ -24,7 +25,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isRightPanelShow, setIsRightPanelShow] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('token'));
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => !!localStorage.getItem('token'),
+  );
   const [user, setUser] = useState<User | null>(null);
 
   const toggleRightPanel = () => {
@@ -76,7 +79,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isRightPanelShow, toggleRightPanel, isLoggedIn, user, login, register, logout, fetchUser }}
+      value={{
+        isRightPanelShow,
+        toggleRightPanel,
+        isLoggedIn,
+        user,
+        login,
+        register,
+        logout,
+        fetchUser,
+      }}
     >
       {children}
     </AuthContext.Provider>
