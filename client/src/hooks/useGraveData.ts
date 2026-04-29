@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
 import { useScreenSize } from './useScreenSize';
 
+//墓碑顯示和擺放的邏輯
+//大屏幕5個，小屏幕4個
+//位置隨機擺放
 export const useGraveData = (
   data: any[],
   currentPage: number,

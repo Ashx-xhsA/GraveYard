@@ -1,17 +1,32 @@
 {
-  "graveyard": {
-    "id": "sea-1",
-    "name": "Sea Graveyard",
-    "backgroundImage": "/themes/FishInSea.png"
-  },
+  "gyBlocks": [
+    {
+      "blockID": "sea-1",
+      "name": "大海區域",
+      "backgroundImage": "/themes/FishInSea.png",
+      "description": "靠近大陆与大洋连接的水域",
+      "number": 2
+    },
+    {
+      "blockID": "desert-1",
+      "name": "荒原區域",
+      "backgroundImage": "/themes/Desert.png",
+      "description": "一堆破烂的偶像，承受着太阳的鞭打",
+      "number": 0
+    }
+  ],
   "graves": [
     {
-      "id": "grave_1",
-      "gyid": "sea-1",
-      "indexInGy": "1",
+      "_id": "69cacced1334130af0985abf",
+      "graveID": "grave_1",
+      "block": {
+        "blockID": "sea-1",
+        "name": "大海區域",
+        "backgroundImage": "/themes/FishInSea.png"
+      },
       "name": "小空的有线耳机",
-      "birth": "2025-03-12",
-      "death": "2025-12-07",
+      "birth": "2025-03-12T00:00:00.000Z",
+      "death": "2025-12-07T00:00:00.000Z",
       "epitaph": "我在洗衣机里一点也不害怕",
       "burial": {
         "display_name": "洗衣机",
@@ -47,12 +62,16 @@
       }
     },
     {
-      "id": "grave_2",
-      "gyid": "sea-1",
-      "indexInGy": "2",
+      "_id": "69cacced1334130af0985ab0",
+      "graveID": "grave_2",
+      "block": {
+        "blockID": "sea-1",
+        "name": "大海區域",
+        "backgroundImage": "/themes/FishInSea.png"
+      },
       "name": "墙外世界的幻想",
-      "birth": "2000-1-1",
-      "death": "2013-04-28",
+      "birth": "2000-01-01T00:00:00.000Z",
+      "death": "2013-04-28T00:00:00.000Z",
       "epitaph": "原来海的那边不仅有自由，还有敌人",
       "burial": {
         "display_name": "艾尔迪亚岛",

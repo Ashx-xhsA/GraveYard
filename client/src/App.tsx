@@ -1,9 +1,10 @@
 import RootLayout from "./components/RootLayout";
 import { MainContainer, About } from "./components";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { loader as mainContainerLoader } from "./components/MainContainer";
+import {  loader as mainContainerLoader } from "./components/MainContainer";
 import { rootLoader } from "./components/RootLayout";
 import { AuthProvider } from "./context/AuthContext";
+import HomePage from "./components/HomePage";
 
 const router = createBrowserRouter([
   {
@@ -15,15 +16,20 @@ const router = createBrowserRouter([
       {
         path: "/",
         index: true,
-        element: <MainContainer />,
-        loader: mainContainerLoader,
+        element: <HomePage />,
       },
-
+      //特定坟墓页面
       {
-        path: "gy/:graveid",
+        path: ":blockid/:graveid",
         element: <MainContainer />,
         loader: mainContainerLoader,
       },
+      //特定墓园页面
+      {
+        path:":blockid",
+        element: <MainContainer />,
+        loader:mainContainerLoader,
+      }
     ],
   },
   {

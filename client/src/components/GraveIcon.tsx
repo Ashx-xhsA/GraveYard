@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 interface GraveIconProps {
   graveData: {
+    block:any;
     _id: string;
     graveID: string;
     name?: string;
@@ -14,10 +15,11 @@ interface GraveIconProps {
 }
 
 const GraveIcon = ({ graveData }: GraveIconProps) => {
-  const { _id, name } = graveData;
+  const { graveID, name,block
+   } = graveData;
   return (
     <Link
-      to={`/gy/${_id}`}
+      to={`/${block.blockID}/${graveID}`}
       className="hover:scale-105 transition-transform grave-icon"
     >
       <h5 className="grave-icon-text">{name}</h5>
