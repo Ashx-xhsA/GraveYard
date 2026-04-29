@@ -22,7 +22,7 @@ const Items = ({currentItems}: {currentItems: any}) => {
     <div className='interaction-items'>
       {currentItems &&
         currentItems.map((item: any) => (
-          <div key={item.id} className='interaction-item'>
+          <div key={item._id || item.id} className='interaction-item'>
             {item.type === 'flower' && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={{ margin: 0 }}>{item.user} left {item.quantity} {item.variety} here.</h3>

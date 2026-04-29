@@ -2,22 +2,29 @@ import mongoose from "mongoose";
 
 const graveSchema = new mongoose.Schema(
   {
+    //單獨墳墓的編號
     graveID: {
       type: String,
       required: true,
       unique: true,
+    },
+    //關聯的墓園
+    block: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "GyBlock",
+      required: true,
     },
     name: {
       type: String,
       required: true,
     },
     birth: {
-      type: Date,
-      required: true,
+      type: String,
+      required: false,
     },
     death: {
-      type: Date,
-      required: true,
+      type: String,
+      required: false,
     },
     epitaph: String,
     burial: {

@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router-dom';
+import { redirect, useLoaderData } from 'react-router-dom';
 import { IoMenuSharp } from "react-icons/io5";
 import { useState } from 'react';
 import { useGraveData } from '../hooks/useGraveData';
@@ -6,25 +6,40 @@ import GraveList from './GraveList';
 import { useAuth } from '../context/AuthContext';
 import GraveInfo from './GraveInfo';
 import api from '../api';
+import tempData from '../../db.json'
 
+const isTest = true; 
+//測試用
 export const loader = async ({ params }: any) => {
-  const { graveid } = params;
+  const { graveid,blockid } = params;
 
   if (graveid) {
-    try {
-      const res = await api.get(`/grave/${graveid}`);
-      return { type: 'detail', data: [graveid, res.data] };
-    } catch {
-      return { type: 'detail', data: [graveid, null] };
+    if (isTest){
+      const mockGraveDetail = tempData.graves.find((g) => g.graveID === graveid);
+    return { type: 'detail', data: [graveid, mockGraveDetail || null] };
     }
-  } else {
-    try {
-      const res = await api.get('/grave', { params: { limit: 100 } });
-      return { type: 'list', data: res.data.graves };
-    } catch {
-      return { type: 'list', data: [] };
+    // try {
+    //   const res = await api.get(`/grave/${graveid}`);
+    //   return { type: 'detail', data: [graveid, res.data] };
+    // } catch {
+    //   return { type: 'detail', data: [graveid, null] };
+    // }
+  } else if (blockid) {
+    // 這是真正的函數
+    // try {
+    //   const res = await api.get('/grave', { params: { limit: 100, block:blockid } });
+    //   return { type: 'list', data: res.data.graves };
+    // } catch {
+    //   return { type: 'list', data: [] };
+    // }
+    
+    if (isTest){
+      const mockGraves = tempData.graves;
+      return {type: 'list',data:mockGraves};
     }
   }
+  //如果找不到路径跳转到主页
+  return redirect('/');
 };
 
 interface LoaderData {

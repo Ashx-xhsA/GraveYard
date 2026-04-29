@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import User from "./src/models/User.js";
 import Grave from "./src/models/Grave.js";
+import GyBlock from "./src/models/GyBlock.js";
 
 dotenv.config();
 
@@ -18,10 +19,42 @@ if (!user) {
   console.log("Test user already exists:", user.username);
 }
 
-// Import the graves
+// 建立墓園區塊 (GyBlock)
+let seaBlock = await GyBlock.findOne({ blockID: "sea-1" });
+if (!seaBlock) {
+  seaBlock = new GyBlock({
+    blockID: "sea-1",
+    name: "大海區域",
+    backgroundImage: "/themes/FishInSea.png",
+    description: "靠近大陆与大洋连接的水域",
+    number: 2
+  });
+  await seaBlock.save();
+  console.log("Created GyBlock: 大海區域");
+} else {
+  console.log("GyBlock 大海區域 already exists");
+}
+
+let desertBlock = await GyBlock.findOne({ blockID: "desert-1" });
+if (!desertBlock) {
+  desertBlock = new GyBlock({
+    blockID: "desert-1",
+    name: "荒原區域",
+    backgroundImage: "/themes/Desert.png",
+    description: "一堆破烂的偶像，承受着太阳的鞭打",
+    number: 0
+  });
+  await desertBlock.save();
+  console.log("Created GyBlock: 荒原區域");
+} else {
+  console.log("GyBlock 荒原區域 already exists");
+}
+
+// 建立墳墓，並把它們關聯到大海區域 (seaBlock._id)
 const graves = [
   {
     graveID: "grave_1",
+    block: seaBlock._id,
     name: "小空的有线耳机",
     birth: new Date("2025-03-12"),
     death: new Date("2025-12-07"),
@@ -31,7 +64,7 @@ const graves = [
       address: "Brookline, Boston",
     },
     memorial:
-      "辛苦的一生，但也有许多欢乐...耳机酱这辈子最喜欢的歌曲是andymori的革命",
+      "只是一個耳機",
     photos: [
       "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/MMTN2",
     ],
@@ -39,6 +72,7 @@ const graves = [
   },
   {
     graveID: "grave_2",
+    block: seaBlock._id,
     name: "墙外世界的幻想",
     birth: new Date("2000-01-01"),
     death: new Date("2013-04-28"),
@@ -58,7 +92,10 @@ const graves = [
 for (const graveData of graves) {
   const existing = await Grave.findOne({ graveID: graveData.graveID });
   if (existing) {
-    console.log(`Grave "${graveData.name}" already exists, skipping.`);
+    // 如果存在，順便更新它的 block
+    existing.block = graveData.block;
+    await existing.save();
+    console.log(`Grave "${graveData.name}" already exists, updated its GyBlock connection.`);
   } else {
     const grave = new Grave(graveData);
     await grave.save();
