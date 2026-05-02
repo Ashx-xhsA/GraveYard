@@ -40,6 +40,7 @@ router.get("/", async (req, res) => {
 
     //filter the certain graves
     const filter = {};
+    let blockInfo = null;
     if (block){
       const gyBlock = await GyBlock.findOne({ blockID: block });
       if (!gyBlock) {
@@ -48,8 +49,10 @@ router.get("/", async (req, res) => {
           totalPages: 0,
           currentPage: pageNum,
           total: 0,
+          blockInfo: null
         });
       }
+      blockInfo = gyBlock;
       filter.block = gyBlock._id;
     }
     const graves = await Grave.find(filter)
@@ -67,6 +70,7 @@ router.get("/", async (req, res) => {
       totalPages: Math.ceil(total / limitNum),
       currentPage: pageNum,
       total,
+      blockInfo
     });
   } catch (error) {
     console.error(error);
