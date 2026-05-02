@@ -28,13 +28,19 @@ export const populateInteractions = async (grave) => {
   };
 };
 
-// Get all graves
+// Get the graves from a certain block
 router.get("/", async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, block} = req.query;
     const pageNum = Number(page);
     const limitNum = Number(limit);
-    const graves = await Grave.find()
+
+    //filter the certain graves
+    const filter = {};
+    if (block){
+      filter.block = block;
+    }
+    const graves = await Grave.find(filter)
       .populate("user", "username")
       .populate("block")
       .limit(limitNum)
@@ -43,7 +49,7 @@ router.get("/", async (req, res) => {
     const populatedGraves = await Promise.all(
       graves.map((grave) => populateInteractions(grave)),
     );
-    const total = await Grave.countDocuments();
+    const total = await Grave.countDocuments(filter);
     return res.json({
       graves: populatedGraves,
       totalPages: Math.ceil(total / limitNum),

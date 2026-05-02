@@ -8,6 +8,7 @@ const Background = () => {
 
   //判断是否在单个墓碑页面
   const isSingleGrave = Boolean(graveid);
+ 
 
   //獲取backgroundimg
   const { gyBlocks } = tempData;

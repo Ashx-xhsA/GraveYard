@@ -8,18 +8,21 @@ interface GraveListProps {
   isRightPanelShow: boolean;
 }
 
-const GraveList = ({ currentGraves, randomIndices, isRightPanelShow }: GraveListProps) => {
+const GraveList = ({ currentGraves, randomIndices, isRightPanelShow,}: GraveListProps) => {
   const screenSize = useScreenSize();
   const cols = !isRightPanelShow ? 4 : 3;
 
   return (
     <div
       id="grave-list-container"
-      style={
-        screenSize === 'lg'
+      style={{
+        ...(screenSize === 'lg'
           ? { gridTemplateColumns: `repeat(${cols}, 1fr)` }
-          : {}
-      }
+          : {}),
+
+      }}
+      
+  
     >
       {currentGraves.map((item: any, index: number) => {
         let gridStyle = {};

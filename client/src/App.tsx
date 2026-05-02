@@ -16,7 +16,8 @@ const router = createBrowserRouter([
       {
         path: "/",
         index: true,
-        element: <HomePage />,
+        element: <MainContainer />,
+        loader: mainContainerLoader,
       },
       //特定坟墓页面
       {
