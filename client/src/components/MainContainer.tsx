@@ -9,7 +9,7 @@ import api from '../api';
 // import tempData from '../../db.json'
 import HomePage from './HomePage';
 
-const isTest = false; 
+// const isTest = false; 
 //測試用
 export const loader = async ({ params }: any) => {
   const { graveid,blockid } = params;
