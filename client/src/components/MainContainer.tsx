@@ -6,44 +6,61 @@ import GraveList from './GraveList';
 import { useAuth } from '../context/AuthContext';
 import GraveInfo from './GraveInfo';
 import api from '../api';
-import tempData from '../../db.json'
+// import tempData from '../../db.json'
+import HomePage from './HomePage';
 
-const isTest = true; 
+const isTest = false; 
 //測試用
 export const loader = async ({ params }: any) => {
   const { graveid,blockid } = params;
 
   if (graveid) {
-    if (isTest){
-      const mockGraveDetail = tempData.graves.find((g) => g.graveID === graveid);
-    return { type: 'detail', data: [graveid, mockGraveDetail || null] };
-    }
-    // try {
-    //   const res = await api.get(`/grave/${graveid}`);
-    //   return { type: 'detail', data: [graveid, res.data] };
-    // } catch {
-    //   return { type: 'detail', data: [graveid, null] };
+    // if (isTest){
+    //   const mockGraveDetail = tempData.graves.find((g) => g.graveID === graveid);
+    // return { type: 'detail', data: [graveid, mockGraveDetail || null] };
     // }
+    try {
+      const res = await api.get(`/grave/${graveid}`);
+      return { type: 'detail', data: [graveid, res.data] };
+    } catch {
+      return { type: 'detail', data: [graveid, null] };
+    }
   } else if (blockid) {
-    // 這是真正的函數
-    // try {
-    //   const res = await api.get('/grave', { params: { limit: 100, block:blockid } });
-    //   return { type: 'list', data: res.data.graves };
-    // } catch {
-    //   return { type: 'list', data: [] };
-    // }
     
-    if (isTest){
-      const mockGraves = tempData.graves;
-      return {type: 'list',data:mockGraves};
+    //需要返回block的信息
+    //data[[墳墓列表]，block背景]
+    try {
+      const res = await api.get('/grave', { params: { limit: 100, block:blockid } });
+      const gravesList = res.data.graves || [];
+      const blockImg = gravesList.length > 0 ? gravesList[0].block.backgroundImage : '';
+      return { type: 'list', data: [gravesList, blockImg] };
+    } catch {
+      return { type: 'list', data: [] };
     }
+    
+    // if (isTest){
+    //   const mockGraves = tempData.graves;
+    //   return {type: 'list',data:[mockGraves,'/themes/desert.JPG']};
+    // }
+  }
+  else if ( !graveid && !blockid){
+    // if(isTest){
+    //   return {type:'home',data:tempData.gyBlocks}
+    // }
+    try {
+      const res = await api.get('/blocks');
+      return { type: 'home', data: res.data.blocks };
+    } catch {
+      return { type: 'home', data: [] };
+    }
+    
   }
   //如果找不到路径跳转到主页
   return redirect('/');
 };
 
 interface LoaderData {
-  type: 'detail' | 'list';
+  type: 'detail' | 'list' | 'home';
   data: any;
 }
 
@@ -52,16 +69,25 @@ const MainContainer = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const { isRightPanelShow, toggleRightPanel } = useAuth();
   const { currentGraves, randomIndices, totalPages } = useGraveData(
-    type === 'list' ? data : [],
+    type === 'list' ? data[0] : [],
     currentPage,
     isRightPanelShow
   );
+  //如果是block則獲取背景
+  const blockImg = type === 'list' ? data[1] : undefined;
+ 
 
   return (
     <div
       className="h-full borderDecoration relative"
       id="main-container"
-      style={{ flex: 1 }}
+      style={{ flex: 1,
+        backgroundImage: blockImg ? `url(${blockImg})` : undefined,
+        backgroundSize: blockImg ? 'cover' : undefined,
+        backgroundPosition: blockImg ? 'center' : undefined
+
+      }}
+
     >
       <button
         id="toggle-right-panel-button"
@@ -70,9 +96,10 @@ const MainContainer = () => {
       >
         <IoMenuSharp />
       </button>
-      {type === 'detail' ? (
-        <GraveInfo />
-      ) : (
+      {/* graveInfo page  */}
+      {type === 'detail' && <GraveInfo/>}
+      {/* gravelist page */}
+      {type === 'list' && (
         <>
           <GraveList
             currentGraves={currentGraves}
@@ -103,6 +130,8 @@ const MainContainer = () => {
           </div>
         </>
       )}
+      {/* home page */}
+      {type === 'home' && <HomePage blocks = {data}/>}
     </div>
   );
 };

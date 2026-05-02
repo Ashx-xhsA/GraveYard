@@ -3,6 +3,7 @@
     {
       "blockID": "sea-1",
       "name": "大海區域",
+      "blockIconImage": "/themes/unknownplace.webp",
       "backgroundImage": "/themes/FishInSea.png",
       "description": "靠近大陆与大洋连接的水域",
       "number": 2
@@ -10,7 +11,8 @@
     {
       "blockID": "desert-1",
       "name": "荒原區域",
-      "backgroundImage": "/themes/Desert.png",
+      "blockIconImage": "/themes/unknownplace.webp",
+      "backgroundImage": "/themes/desert.JPG",
       "description": "一堆破烂的偶像，承受着太阳的鞭打",
       "number": 0
     }

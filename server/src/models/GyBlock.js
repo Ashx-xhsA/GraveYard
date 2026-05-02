@@ -13,6 +13,11 @@ const gyBlockSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    //墓园入口的显示图片
+    blockIconImage:{
+      type:String,
+      required:false,
+    },
     // 此墓園的背景圖 :"/themes/FishInSea.png"
     backgroundImage: {
       type: String,
