@@ -9,9 +9,11 @@ const router = express.Router();
 // Helper function to fill up interaction field in graves
 export const populateInteractions = async (grave) => {
   if (!grave) return null;
-  const interactions = await Interaction.find({ graveId: grave._id }).sort({
-    createdAt: 1,
-  });
+  const interactions = await Interaction.find({ graveId: grave._id })
+    .populate("user", "username")
+    .sort({
+      createdAt: 1,
+    });
   const totalFlowers = interactions
     .filter((i) => i.type === "flower")
     .reduce((sum, i) => sum + (i.quantity || 1), 0);
