@@ -23,7 +23,12 @@
 get(`/grave/${graveid}`)
 //这个graveid是指graveID而不是_id （为了路由好看）
 // `/grave/grave-1`
-
-const res = await api.get('/blocks');
 ```
-
+- get grave list (get a block of graves)
+```js
+api.get('/grave', { params: { limit: 100, block:blockid } })
+```
+- get block list
+```js
+api.get('/blocks')
+```
