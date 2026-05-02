@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import User from "./src/models/User.js";
 import Grave from "./src/models/Grave.js";
 import GyBlock from "./src/models/GyBlock.js";
+import Interaction from "./src/models/Interaction.js";
 
 dotenv.config();
 
@@ -111,6 +112,38 @@ for (const graveData of graves) {
     await grave.save();
     console.log(`Created grave: "${graveData.name}" (_id: ${grave._id})`);
   }
+}
+
+// 新增 Interaction
+const createdGraves = await Grave.find();
+await Interaction.deleteMany({ user: user._id });
+if (createdGraves.length > 0) {
+  const interactions = [
+    {
+      graveId: createdGraves[0]._id, // 留給小空的有线耳机
+      type: "flower",
+      variety: "洗衣液",
+      quantity: 1,
+      user: user._id,
+    },
+
+    {
+      graveId: createdGraves[1]._id, // 留給墙外世界的幻想
+      type: "flower",
+      variety: "地鳴",
+      quantity: 999,
+      user: user._id,
+    },
+    {
+      graveId: createdGraves[1]._id,
+      type: "message",
+      content: "我踏馬萊啦",
+      user: user._id,
+    }
+  ];
+
+  await Interaction.insertMany(interactions);
+  console.log("Created interactions (flowers and messages).");
 }
 
 console.log(
