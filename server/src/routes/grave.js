@@ -1,6 +1,7 @@
 import express from "express";
 import Grave from "../models/Grave.js";
 import Interaction from "../models/Interaction.js";
+import GyBlock from "../models/GyBlock.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -38,7 +39,16 @@ router.get("/", async (req, res) => {
     //filter the certain graves
     const filter = {};
     if (block){
-      filter.block = block;
+      const gyBlock = await GyBlock.findOne({ blockID: block });
+      if (!gyBlock) {
+        return res.json({
+          graves: [],
+          totalPages: 0,
+          currentPage: pageNum,
+          total: 0,
+        });
+      }
+      filter.block = gyBlock._id;
     }
     const graves = await Grave.find(filter)
       .populate("user", "username")
