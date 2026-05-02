@@ -69,7 +69,7 @@ const MainContainer = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const { isRightPanelShow, toggleRightPanel } = useAuth();
   const { currentGraves, randomIndices, totalPages } = useGraveData(
-    type === 'list' ? data[0] : [],
+    type === 'list' ? (data[0] || []) : [],
     currentPage,
     isRightPanelShow
   );
