@@ -18,10 +18,15 @@ const gyBlockSchema = new mongoose.Schema(
       type:String,
       required:false,
     },
-    // 此墓園的背景圖 :"/themes/FishInSea.png"
+    // 此墓園的背景圖
     backgroundImage: {
+      url: { type: String, required: true },
+      styles: { type: String, default: "" }
+    },
+    // 官方提供的墳墓 icon
+    graveIcon: {
       type: String,
-      required: true,
+      default: ""
     },
     // 墓園描述
     description: String,

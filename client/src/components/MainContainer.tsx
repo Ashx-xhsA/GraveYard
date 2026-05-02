@@ -32,8 +32,8 @@ export const loader = async ({ params }: any) => {
     try {
       const res = await api.get('/grave', { params: { limit: 100, block:blockid } });
       const gravesList = res.data.graves || [];
-      const blockImg = gravesList.length > 0 ? gravesList[0].block.backgroundImage : '';
-      return { type: 'list', data: [gravesList, blockImg] };
+      const blockBgObj = res.data.blockInfo?.backgroundImage || null;
+      return { type: 'list', data: [gravesList, blockBgObj] };
     } catch {
       return { type: 'list', data: [] };
     }
@@ -74,7 +74,16 @@ const MainContainer = () => {
     isRightPanelShow
   );
   //如果是block則獲取背景
-  const blockImg = type === 'list' ? data[1] : undefined;
+  const blockBgObj = type === 'list' ? data[1] : undefined;
+
+  //獲取url
+  const blockImg = blockBgObj?.url;
+  //獲取styles
+  const blockStylesString = blockBgObj?.styles;
+  const customStyles = typeof blockStylesString === 'string' && blockStylesString !== '' 
+    ? JSON.parse(blockStylesString) 
+    : {};
+
  
 
   return (
@@ -83,8 +92,7 @@ const MainContainer = () => {
       id="main-container"
       style={{ flex: 1,
         backgroundImage: blockImg ? `url(${blockImg})` : undefined,
-        backgroundSize: blockImg ? 'cover' : undefined,
-        backgroundPosition: blockImg ? 'center' : undefined
+        ...customStyles
 
       }}
 
