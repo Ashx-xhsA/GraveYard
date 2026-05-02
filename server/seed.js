@@ -27,7 +27,11 @@ if (!seaBlock) {
     blockID: "sea-1",
     name: "大海區域",
     blockIconImage: "/themes/unknownplace.webp",
-    backgroundImage: "/themes/FishInSea.png",
+    backgroundImage: { 
+      url: "/themes/FishInSea.png", 
+      styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}' 
+    },
+    graveIcon: "",
     description: "靠近大陆与大洋连接的水域",
     number: 2
   });
@@ -35,7 +39,10 @@ if (!seaBlock) {
   console.log("Created GyBlock: 大海區域");
 } else {
   seaBlock.blockIconImage = "/themes/unknownplace.webp";
-  seaBlock.backgroundImage = "/themes/FishInSea.png";
+  seaBlock.backgroundImage = { 
+    url: "/themes/FishInSea.png", 
+    styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}' 
+  };
   await seaBlock.save();
   console.log("GyBlock 大海區域 already exists, updated images");
 }
@@ -46,7 +53,11 @@ if (!desertBlock) {
     blockID: "desert-1",
     name: "荒原區域",
     blockIconImage: "/themes/unknownplace.webp",
-    backgroundImage: "/themes/desert.JPG",
+    backgroundImage: { 
+      url: "/themes/desert.JPG", 
+      styles: '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}' 
+    },
+    graveIcon: "",
     description: "一堆破烂的偶像，承受着太阳的鞭打",
     number: 0
   });
@@ -54,19 +65,22 @@ if (!desertBlock) {
   console.log("Created GyBlock: 荒原區域");
 } else {
   desertBlock.blockIconImage = "/themes/unknownplace.webp";
-  desertBlock.backgroundImage = "/themes/desert.JPG";
+  desertBlock.backgroundImage = { 
+    url: "/themes/desert.JPG", 
+    styles: '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}' 
+  };
   await desertBlock.save();
   console.log("GyBlock 荒原區域 already exists, updated images");
 }
 
-// 建立墳墓，並把它們關聯到大海區域 (seaBlock._id)
+// 建立墳墓，並把它們關聯到大海區域
 const graves = [
   {
     graveID: "grave_1",
     block: seaBlock._id,
     name: "小空的有线耳机",
-    birth: "2025-03-12", // 👈 改為純字串
-    death: "2025-12-07", // 👈 改為純字串
+    birth: "2025-03-12", 
+    death: "2025-12-07", 
     epitaph: "我在洗衣机里一点也不害怕",
     burial: {
       display_name: "洗衣机",
@@ -83,8 +97,8 @@ const graves = [
     graveID: "grave_2",
     block: seaBlock._id,
     name: "墙外世界的幻想",
-    birth: "2000-01-01", // 👈 改為純字串
-    death: "2013-04-28", // 👈 改為純字串
+    birth: "2000-01-01",
+    death: "2013-04-28", 
     epitaph: "原来海的那边不仅有自由，还有敌人",
     burial: {
       display_name: "艾尔迪亚岛",
