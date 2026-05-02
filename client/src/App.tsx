@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {  loader as mainContainerLoader } from "./components/MainContainer";
 import { rootLoader } from "./components/RootLayout";
 import { AuthProvider } from "./context/AuthContext";
-import HomePage from "./components/HomePage";
 
 const router = createBrowserRouter([
   {
