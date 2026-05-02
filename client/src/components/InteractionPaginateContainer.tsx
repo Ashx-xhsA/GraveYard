@@ -11,7 +11,8 @@ const TotalCount = ({interaction, name}: {interaction: any, name: string}) => {
 
 const Items = ({currentItems}: {currentItems: any}) => {
   const formatDate = (timestamp: any) => {
-    const date = new Date(Number(timestamp) * 1000);
+    if (!timestamp) return 'Invalid Date';
+    const date = new Date(timestamp);
     if (isNaN(date.getTime())) {
       return 'Invalid Date';
     }
@@ -25,14 +26,14 @@ const Items = ({currentItems}: {currentItems: any}) => {
           <div key={item._id || item.id} className='interaction-item'>
             {item.type === 'flower' && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ margin: 0 }}>{item.user} left {item.quantity} {item.variety} here.</h3>
-                <p style={{ margin: 0, whiteSpace: 'nowrap', paddingLeft: '10px' }}>{formatDate(item.timestamp)}</p>
+                <h3 style={{ margin: 0 }}>{item.user?.username || item.user || 'Unknown'} left {item.quantity} {item.variety} here.</h3>
+                <p style={{ margin: 0, whiteSpace: 'nowrap', paddingLeft: '10px' }}>{formatDate(item.createdAt)}</p>
               </div>
             )}
             {item.type === 'message' && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ margin: 0 }}>{item.user} said: "{item.content}"</h3>
-                <p style={{ margin: 0, whiteSpace: 'nowrap', paddingLeft: '10px' }}>{formatDate(item.timestamp)}</p>
+                <h3 style={{ margin: 0 }}>{item.user?.username || item.user || 'Unknown'} said: "{item.content}"</h3>
+                <p style={{ margin: 0, whiteSpace: 'nowrap', paddingLeft: '10px' }}>{formatDate(item.createdAt)}</p>
               </div>
             )}
           </div>
