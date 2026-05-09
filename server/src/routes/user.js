@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Grave from "../models/Grave.js";
 import { populateInteractions } from "./grave.js";
 import Interaction from "../models/Interaction.js";
+import Theme from "../models/Theme.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -42,7 +43,10 @@ router.get("/me/interactions", verifyToken, async (req, res) => {
 router.get("/me", verifyToken, async (req, res) => {
   try {
     const userId = req.userId;
-    const user = await User.findById(userId).select("username email");
+    const user = await User.findById(userId)
+      .select("username email settings favorites")
+      .populate("settings.theme")
+      .populate("favorites", "graveID name");
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
@@ -53,10 +57,39 @@ router.get("/me", verifyToken, async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
+        settings: user.settings,
+        favorites: user.favorites,
       },
       gravesCreated,
       interactionsMade,
     });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// Update current user settings
+router.put("/me/settings", verifyToken, async (req, res) => {
+  try {
+    const { theme, fontsize } = req.body;
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+    if (theme !== undefined) {
+      const themeDoc = await Theme.findOne({ name: theme });
+      if (!themeDoc) {
+        return res.status(404).json({ error: "Theme not found." });
+      }
+      user.settings.theme = themeDoc._id;
+    }
+    if (fontsize !== undefined) {
+      user.settings.fontsize = fontsize;
+    }
+    await user.save();
+    await user.populate("settings.theme");
+    return res.json({ settings: user.settings });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error." });

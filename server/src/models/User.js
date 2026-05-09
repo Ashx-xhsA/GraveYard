@@ -12,6 +12,19 @@ const userSchema = new mongoose.Schema(
     },
     // email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Grave",
+      },
+    ],
+    settings: {
+      theme: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Theme",
+      },
+      fontsize: { type: Number, default: 14 },
+    },
   },
   { timestamps: true }
 );

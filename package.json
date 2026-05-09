@@ -1,5 +1,13 @@
 {
-  "dependencies": {
-    "react-paginate": "^8.3.0"
+  "name": "graveyard",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n server,client -c yellow,cyan \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "seed": "node server/seed.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }

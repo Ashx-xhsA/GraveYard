@@ -5,24 +5,24 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router({ mergeParams: true });
 
-// Helper to get grave stats
-const getGraveStats = async (graveId) => {
+const getGraveStats = async (graveObjectId) => {
   const totalFlowers = await Interaction.countDocuments({
-    graveId,
+    graveId: graveObjectId,
     type: "flower",
   });
   const totalMessages = await Interaction.countDocuments({
-    graveId,
+    graveId: graveObjectId,
     type: "message",
   });
   return { totalFlowers, totalMessages };
 };
 
 // Get all interactions for a grave
-router.get("/:graveId/interactions", async (req, res) => {
+router.get("/interactions", async (req, res) => {
   try {
-    const { graveId } = req.params;
-    const interactions = await Interaction.find({ graveId })
+    const grave = await Grave.findOne({ graveID: req.params.graveId });
+    if (!grave) return res.status(404).json({ error: "Grave not found." });
+    const interactions = await Interaction.find({ graveId: grave._id })
       .sort({ createdAt: -1 })
       .populate("user", "username");
     return res.json(interactions);
@@ -33,14 +33,13 @@ router.get("/:graveId/interactions", async (req, res) => {
 });
 
 // Post a flower to a grave
-router.post("/:graveId/flowers", verifyToken, async (req, res) => {
+router.post("/flowers", verifyToken, async (req, res) => {
   try {
-    const { graveId } = req.params;
     const { variety, quantity = 1 } = req.body;
-    const grave = await Grave.findById(graveId);
+    const grave = await Grave.findOne({ graveID: req.params.graveId });
     if (!grave) return res.status(404).json({ error: "Grave not found." });
     const interaction = new Interaction({
-      graveId,
+      graveId: grave._id,
       type: "flower",
       variety,
       user: req.userId,
@@ -48,13 +47,7 @@ router.post("/:graveId/flowers", verifyToken, async (req, res) => {
     });
     await interaction.save();
     await interaction.populate("user", "username");
-    const stats = await getGraveStats(graveId);
-    const history = await Interaction.find({ graveId })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .populate("user", "username");
-    grave.interaction = { stats, history };
-    await grave.save();
+    const stats = await getGraveStats(grave._id);
     return res.status(201).json({
       message: "Sent a flower to the grave.",
       interaction,
@@ -67,27 +60,20 @@ router.post("/:graveId/flowers", verifyToken, async (req, res) => {
 });
 
 // Post a message to a grave
-router.post("/:graveId/messages", verifyToken, async (req, res) => {
+router.post("/messages", verifyToken, async (req, res) => {
   try {
-    const { graveId } = req.params;
     const { content } = req.body;
-    const grave = await Grave.findById(graveId);
+    const grave = await Grave.findOne({ graveID: req.params.graveId });
     if (!grave) return res.status(404).json({ error: "Grave not found." });
     const interaction = new Interaction({
-      graveId,
+      graveId: grave._id,
       type: "message",
       user: req.userId,
       content,
     });
     await interaction.save();
     await interaction.populate("user", "username");
-    const stats = await getGraveStats(graveId);
-    const history = await Interaction.find({ graveId })
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .populate("user", "username");
-    grave.interaction = { stats, history };
-    await grave.save();
+    const stats = await getGraveStats(grave._id);
     return res.status(201).json({
       message: "Left a message on the grave.",
       interaction,
@@ -101,12 +87,12 @@ router.post("/:graveId/messages", verifyToken, async (req, res) => {
 
 // Delete an interaction
 router.delete(
-  "/:graveId/interactions/:interactionId",
+  "/interactions/:interactionId",
   verifyToken,
   async (req, res) => {
     try {
-      const { graveId, interactionId } = req.params;
-      const grave = await Grave.findById(graveId);
+      const { interactionId } = req.params;
+      const grave = await Grave.findOne({ graveID: req.params.graveId });
       if (!grave) return res.status(404).json({ error: "Grave not found." });
       const interaction = await Interaction.findById(interactionId);
       if (!interaction)
@@ -117,13 +103,7 @@ router.delete(
           .json({ error: "You can only take back your own interactions." });
       }
       await interaction.deleteOne();
-      const stats = await getGraveStats(graveId);
-      const history = await Interaction.find({ graveId })
-        .sort({ createdAt: -1 })
-        .limit(10)
-        .populate("user", "username");
-      grave.interaction = { stats, history };
-      await grave.save();
+      const stats = await getGraveStats(grave._id);
       return res.json({
         message: "You have taken back your interaction.",
         graveStats: stats,

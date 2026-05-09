@@ -4,6 +4,7 @@ import User from "./src/models/User.js";
 import Grave from "./src/models/Grave.js";
 import GyBlock from "./src/models/GyBlock.js";
 import Interaction from "./src/models/Interaction.js";
+import Theme from "./src/models/Theme.js";
 
 dotenv.config();
 
@@ -27,21 +28,21 @@ if (!seaBlock) {
     blockID: "sea-1",
     name: "大海區域",
     blockIconImage: "/themes/unknownplace.webp",
-    backgroundImage: { 
-      url: "/themes/FishInSea.png", 
-      styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}' 
+    backgroundImage: {
+      url: "/themes/FishInSea.png",
+      styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}',
     },
     graveIcon: "",
     description: "靠近大陆与大洋连接的水域",
-    number: 2
+    number: 2,
   });
   await seaBlock.save();
   console.log("Created GyBlock: 大海區域");
 } else {
   seaBlock.blockIconImage = "/themes/unknownplace.webp";
-  seaBlock.backgroundImage = { 
-    url: "/themes/FishInSea.png", 
-    styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}' 
+  seaBlock.backgroundImage = {
+    url: "/themes/FishInSea.png",
+    styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}',
   };
   await seaBlock.save();
   console.log("GyBlock 大海區域 already exists, updated images");
@@ -53,21 +54,23 @@ if (!desertBlock) {
     blockID: "desert-1",
     name: "荒原區域",
     blockIconImage: "/themes/unknownplace.webp",
-    backgroundImage: { 
-      url: "/themes/desert.JPG", 
-      styles: '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}' 
+    backgroundImage: {
+      url: "/themes/desert.JPG",
+      styles:
+        '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}',
     },
     graveIcon: "",
     description: "一堆破烂的偶像，承受着太阳的鞭打",
-    number: 0
+    number: 0,
   });
   await desertBlock.save();
   console.log("Created GyBlock: 荒原區域");
 } else {
   desertBlock.blockIconImage = "/themes/unknownplace.webp";
-  desertBlock.backgroundImage = { 
-    url: "/themes/desert.JPG", 
-    styles: '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}' 
+  desertBlock.backgroundImage = {
+    url: "/themes/desert.JPG",
+    styles:
+      '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}',
   };
   await desertBlock.save();
   console.log("GyBlock 荒原區域 already exists, updated images");
@@ -79,15 +82,14 @@ const graves = [
     graveID: "grave_1",
     block: seaBlock._id,
     name: "小空的有线耳机",
-    birth: "2025-03-12", 
-    death: "2025-12-07", 
+    birth: "2025-03-12",
+    death: "2025-12-07",
     epitaph: "我在洗衣机里一点也不害怕",
     burial: {
       display_name: "洗衣机",
       address: "Brookline, Boston",
     },
-    memorial:
-      "只是一個耳機",
+    memorial: "只是一個耳機",
     photos: [
       "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/MMTN2",
     ],
@@ -98,7 +100,7 @@ const graves = [
     block: seaBlock._id,
     name: "墙外世界的幻想",
     birth: "2000-01-01",
-    death: "2013-04-28", 
+    death: "2013-04-28",
     epitaph: "原来海的那边不仅有自由，还有敌人",
     burial: {
       display_name: "艾尔迪亚岛",
@@ -120,7 +122,9 @@ for (const graveData of graves) {
     existing.birth = graveData.birth;
     existing.death = graveData.death;
     await existing.save();
-    console.log(`Grave "${graveData.name}" already exists, updated its schema.`);
+    console.log(
+      `Grave "${graveData.name}" already exists, updated its schema.`,
+    );
   } else {
     const grave = new Grave(graveData);
     await grave.save();
@@ -153,11 +157,29 @@ if (createdGraves.length > 0) {
       type: "message",
       content: "我踏馬萊啦",
       user: user._id,
-    }
+    },
   ];
 
   await Interaction.insertMany(interactions);
   console.log("Created interactions (flowers and messages).");
+}
+
+// Themes
+const themes = [
+  {
+    name: "yume2kki",
+    backgroundImage: { url: "/themes/containerbg.png", styles: "" },
+    borderImage: { url: "/themes/border.png", styles: "" },
+    homeImage: { url: "/themes/containerbg-2.PNG", styles: "" },
+  },
+];
+
+for (const t of themes) {
+  await Theme.findOneAndUpdate({ name: t.name }, t, {
+    upsert: true,
+    new: true,
+  });
+  console.log(`Upserted theme: ${t.name}`);
 }
 
 console.log(

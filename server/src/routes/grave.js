@@ -34,14 +34,14 @@ export const populateInteractions = async (grave) => {
 // Get the graves from a certain block
 router.get("/", async (req, res) => {
   try {
-    const { page = 1, limit = 10, block} = req.query;
+    const { page = 1, limit = 10, block } = req.query;
     const pageNum = Number(page);
     const limitNum = Number(limit);
 
     //filter the certain graves
     const filter = {};
     let blockInfo = null;
-    if (block){
+    if (block) {
       const gyBlock = await GyBlock.findOne({ blockID: block });
       if (!gyBlock) {
         return res.json({
@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
           totalPages: 0,
           currentPage: pageNum,
           total: 0,
-          blockInfo: null
+          blockInfo: null,
         });
       }
       blockInfo = gyBlock;
@@ -70,7 +70,7 @@ router.get("/", async (req, res) => {
       totalPages: Math.ceil(total / limitNum),
       currentPage: pageNum,
       total,
-      blockInfo
+      blockInfo,
     });
   } catch (error) {
     console.error(error);
@@ -95,16 +95,24 @@ router.get("/:graveId", async (req, res) => {
   }
 });
 
+// Generate the next available graveID
+const generateGraveID = async () => {
+  let n = (await Grave.countDocuments()) + 1;
+  while (await Grave.exists({ graveID: `grave-${n}` })) n += 1;
+  return `grave-${n}`;
+};
+
 // Post a new grave
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const { graveID, name, birth, death, epitaph, burial, memorial, photos, block } =
+    const { name, birth, death, epitaph, burial, memorial, photos, block } =
       req.body;
-    if (!graveID || !name || !birth || !death || !block) {
+    if (!name || !birth || !death || !block) {
       return res
         .status(400)
         .json({ error: "Please fill out the required data for your grave." });
     }
+    const graveID = await generateGraveID();
     const grave = new Grave({
       graveID,
       name,
@@ -136,7 +144,8 @@ router.put("/:graveId", verifyToken, async (req, res) => {
     if (grave.user.toString() !== req.userId) {
       return res.status(403).json({ error: "This is someone else's grave." });
     }
-    const { name, birth, death, epitaph, burial, memorial, photos, block } = req.body;
+    const { name, birth, death, epitaph, burial, memorial, photos, block } =
+      req.body;
     if (name) grave.name = name;
     if (birth) grave.birth = birth;
     if (death) grave.death = death;
