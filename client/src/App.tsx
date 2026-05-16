@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {  loader as mainContainerLoader } from "./components/MainContainer";
 import { rootLoader } from "./components/RootLayout";
 import { AuthProvider } from "./context/AuthContext";
+import { ModalProvider } from "./context/ModalContext";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,9 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ModalProvider>
+        <RouterProvider router={router} />
+      </ModalProvider>
     </AuthProvider>
   );
 };
