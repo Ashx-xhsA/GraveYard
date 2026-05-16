@@ -1,5 +1,8 @@
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+import { useModal } from '../context/ModalContext';
+import Settings from './Settings';
+import NewGrave from './NewGrave';
 
 const HeaderIconContainer = () => {
   const { isLoggedIn, login, logout } = useAuth();
@@ -8,6 +11,7 @@ const HeaderIconContainer = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const {openModal} = useModal();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -30,10 +34,10 @@ const HeaderIconContainer = () => {
       id="headerIconContainer"
       className="flex flex-row justify-between gap-2 relative"
     >
-      <button id="SettingsButton" className="header-icon-button">
+      <button id="SettingsButton" className="header-icon-button" onClick={()=>openModal(<Settings />)}>
         Settings
       </button>
-      <button id="ApplyButton" className="header-icon-button">
+      <button id="ApplyButton" className="header-icon-button" onClick={()=>openModal(<NewGrave/>)}>
         New Grave
       </button>
       {isLoggedIn ? (

@@ -7,6 +7,8 @@ import {
 } from './index';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ModalReuse } from './ModalReuse';
+
 
 export const rootLoader = () => {
   return null;
@@ -14,6 +16,7 @@ export const rootLoader = () => {
 
 const RootLayout = () => {
   const { isRightPanelShow, user } = useAuth();
+  
 
   return (
     <>
@@ -31,6 +34,7 @@ const RootLayout = () => {
           {isRightPanelShow && <RightPanel user={user} />}
         </div>
         <Footer />
+          
       </div>
     </>
   );
