@@ -4,7 +4,7 @@ import { ModalReuse } from "../components/ModalReuse";
 
 interface ModalContext {
     open: boolean;
-    closeModal?: () => void;
+    closeModal: () => void;
     openModal: (content: React.ReactNode) => void;
 }
 
