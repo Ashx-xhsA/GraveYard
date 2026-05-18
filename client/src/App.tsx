@@ -5,6 +5,7 @@ import {  loader as mainContainerLoader } from "./components/MainContainer";
 import { rootLoader } from "./components/RootLayout";
 import { AuthProvider } from "./context/AuthContext";
 import { ModalProvider } from "./context/ModalContext";
+import { ThemeProvider } from "./context/ThemeContext";
 
 const router = createBrowserRouter([
   {
@@ -41,9 +42,12 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <AuthProvider>
+      <ThemeProvider>
+
       <ModalProvider>
         <RouterProvider router={router} />
       </ModalProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 };

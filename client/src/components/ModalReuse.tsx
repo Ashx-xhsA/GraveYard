@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { useTheme } from "../context/ThemeContext";
+
 
 interface Props {
     open: boolean;
@@ -22,22 +24,42 @@ export const ModalReuse : React.FC<Props> = (props) => {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [open, closeModal]);
 
+    useEffect(() => {
+        if (open) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [open]);
+
 
     if (!open) return null;
+    const {style} = useTheme();
 
     return (
-        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] bg-white p-6 rounded-lg shadow-xl text-black min-w-[300px]">
-            <button 
-                onClick={closeModal}
-                className="absolute top-3 right-3 text-gray-400 hover:text-gray-800 transition-colors p-1"
-                aria-label="Close modal"
+        <div 
+            className="fixed inset-0 z-[100] bg-black/30 flex items-center justify-center"
+            onClick={closeModal}
+        >
+            <div 
+                className="relative p-6  min-w-[300px]" 
+                style={style}
+                onClick={(e) => e.stopPropagation()} 
             >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            
-            {content}
+                <button 
+                    onClick={closeModal}
+                    className="absolute -top-2 -right-2 hover:scale-150 active:scale-95 transition-transform "
+                    aria-label="Close modal"
+                >
+                    <img src={style?.quitImage || "/quit.PNG"} alt="Close" className="h-6 w-6 object-contain" style={{ imageRendering: 'pixelated' }} />
+                </button>
+                
+                {content}
+            </div>
         </div>
     );
 }
