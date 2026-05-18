@@ -1,12 +1,11 @@
 import { useAuth } from '../context/AuthContext';
-import { useState } from 'react';
 import { useModal } from '../context/ModalContext';
 import Settings from './Settings';
 import NewGrave from './NewGrave';
 import Login from './Login';
 
 const HeaderIconContainer = () => {
-  const { isLoggedIn, login, logout } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
   const {openModal} = useModal();
 
   
