@@ -9,7 +9,7 @@ export const ThemeContext =createContext< ThemeContext | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode })=>{
     const [themeName, setThemeName] = useState("DefaultTheme") ;
-    const [style, setStyle] = useState({backgroundImage:"url('/themes/containerbg.png')", imageRendering: "pixelated", borderStyle: "solid",borderWidth: "16px", borderImage: "url('/themes/border.png') 10 repeat" , quitImage: "/themes/quit.png"
+    const [style, setStyle] = useState({backgroundImage:"url('/themes/containerbg.png')", imageRendering: "pixelated", borderStyle: "solid",borderWidth: "16px", borderImage: "url('/themes/border.png') 10 repeat" , quitImage: "/quit.PNG", modalHeaderColor: '#553d66'
 });
 
     const setTheme = (newThemeName: string, newStyle: any)=>{

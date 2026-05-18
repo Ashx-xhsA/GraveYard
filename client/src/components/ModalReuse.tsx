@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 
-
 interface Props {
     open: boolean;
     closeModal?: () => void;
@@ -9,8 +8,10 @@ interface Props {
 }
 
 export const ModalReuse : React.FC<Props> = (props) => {
+    const { style } = useTheme();
+    const quitImageSrc = style?.quitImage || "/quit.PNG";
     const {open, closeModal, content} = props; 
-    // simple useEffect to capture ESC key to close the modal 
+
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Escape' && open) {
@@ -38,7 +39,7 @@ export const ModalReuse : React.FC<Props> = (props) => {
 
 
     if (!open) return null;
-    const {style} = useTheme();
+    
 
     return (
         <div 
@@ -55,10 +56,12 @@ export const ModalReuse : React.FC<Props> = (props) => {
                     className="absolute -top-2 -right-2 hover:scale-150 active:scale-95 transition-transform "
                     aria-label="Close modal"
                 >
-                    <img src={style?.quitImage || "/quit.PNG"} alt="Close" className="h-6 w-6 object-contain" style={{ imageRendering: 'pixelated' }} />
+                    <img src={quitImageSrc} alt="Close" className="h-6 w-6 object-contain" style={{ imageRendering: 'pixelated' }} />
                 </button>
                 
                 {content}
+                
+                
             </div>
         </div>
     );

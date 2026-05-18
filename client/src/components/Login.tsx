@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext';
 import { useModal } from '../context/ModalContext';
+import { useTheme } from '../context/ThemeContext';
+
 
 const Login = () => {
   const { login, register } = useAuth();
@@ -10,6 +12,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const modalHeaderColor = useTheme()?.style?.modalHeaderColor ?? "#8a63a6";
+ 
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -38,9 +42,13 @@ const Login = () => {
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 min-w-[280px]"
       >
-        <h2 className="text-2xl font-bold text-center mb-2">{isRegisterMode ? 'Register' : 'Login'}</h2>
+       <h2  className="text-2xl font-bold text-center mb-2" 
+          style={{ color: modalHeaderColor }} 
+          >
+          {isRegisterMode ? 'Register' : 'Login'}
+        </h2>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" style={{ color: modalHeaderColor }} >
           <label className="w-20 font-medium text-right" htmlFor="username">Username</label>
           <input
             id="username"
@@ -48,13 +56,12 @@ const Login = () => {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="flex-1 p-1.5 bg-transparent rounded outline-none transition-colors [&:-webkit-autofill]:shadow-[0_0_0px_1000px_rgb(249,228,246)_inset]"
-            autoComplete="off"
+            className="flex-1 p-1.5 outline-none transition-colors"
             required
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" style={{ color: modalHeaderColor }} >
           <label className="w-20 font-medium text-right" htmlFor="password">Password</label>
           <input
             id="password"
@@ -62,8 +69,7 @@ const Login = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="flex-1 p-1.5 bg-transparent rounded outline-none transition-colors [&:-webkit-autofill]:shadow-[0_0_0px_1000px_rgb(249,228,246)_inset]"
-            autoComplete="new-password"
+            className="flex-1 p-1.5 outline-none transition-colors"
             required
           />
         </div>
@@ -84,7 +90,7 @@ const Login = () => {
 
         <button
           type="submit"
-          className="header-icon-button w-full mt-2 py-2"
+          className="header-icon-button inline-block self-center px-2"
           disabled={loading}
         >
           {loading ? '...' : (isRegisterMode ? 'Register' : 'Login')}
