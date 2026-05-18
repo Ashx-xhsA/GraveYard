@@ -7,7 +7,6 @@ import {
 } from './index';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ModalReuse } from './ModalReuse';
 
 
 export const rootLoader = () => {
