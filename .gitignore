@@ -40,3 +40,6 @@ ehthumbs.db
 # Runtime
 .next/
 .cache/
+
+# Claude Code：skills 和 CLAUDE.md 入库共享，本机权限配置不入库
+.claude/settings.local.json
