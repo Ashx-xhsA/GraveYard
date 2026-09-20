@@ -13,11 +13,12 @@
 
 | # | 任务 | 量 | 为什么排最前 | 出处 |
 |---|---|---|---|---|
-| 1 | `seed.js` 里 `containerbg-2.PNG` → `.png` | 1 行 | **本地 macOS 大小写不敏感看不出来，一上 Vercel/Linux 就 404** | C |
-| 2 | `index.css` 的 `@font-face` 路径 `fonts/…` → `/fonts/…` | 1 行 | 现在解析到不存在的 `src/fonts/` | C |
-| 3 | 补上 `--interaction-paginate-link-hover-color`（或改用已定义的那个） | 1 行 | 分页 hover 的文字颜色现在是失效的 | C |
-| 4 | 新建 `.env.example`（`MONGO_URI`、`JWT_SECRET`） | S | 换台机器或朋友接手直接跑不起来；`JWT_SECRET` 缺失时 `jwt.sign` 直接抛错 | R#9 |
-| 5 | `Background.tsx` 改成从 API 取背景，不再读 `db.json` | S | 单墓碑页的外层背景现在是死数据（代码自带「等待修改」注释） | R#16 |
+| 1 | ✅ ~~`seed.js` 里 `containerbg-2.PNG` → `.png`~~ | 1 行 | 2026-09-19 随 #18 改名一并完成，数据库旧值也已用 `migrate-asset-paths.js --apply` 迁移 | C |
+| 2 | ✅ ~~`index.css` 的 `@font-face` 路径~~ | 1 行 | 2026-09-19：先修好路径，随后发现字体文件 2MB，**索性整个移除改用系统字体栈**（PRD **D15**）。现在项目不下载任何字体文件 | C |
+| 3 | ✅ ~~补上 `--interaction-paginate-link-hover-color`~~ | 1 行 | 2026-09-19 完成。按 D16 写成 `var(--color-accent)`，跟着主色走 | C |
+| 4 | 🅿️ ~~新建 `server/.env.example`~~ —— **2026-09-19 用户决定跳过** | S | 文件已写好又按用户要求删除。若以后换机器或有人接手，需要的三个键是 `MONGO_URI`、`JWT_SECRET`、`PORT`（5001） | R#9 |
+| 5 | ✅ ~~`Background.tsx` 改成从 API 取背景~~ | S | 2026-09-19 完成。用 `useRouteLoaderData` 复用 loader 已取回的数据，**不发第二个请求**；`db.json` 自此零引用 | R#16 |
+| 41 | ✅ ~~墓园页（L1）外层背景切换成「主题·容器图」~~ | S | 2026-09-19 完成，和 #5 同一个组件。值写成 `var(--container-background-image)`，#25 接 DB 后自动跟着换 | C |
 
 ---
 
@@ -54,11 +55,12 @@
 
 | # | 任务 | 量 | 说明 | 出处 |
 |---|---|---|---|---|
-| 16 | 删死文件：`App.css`、`react.svg`、重复的 `ms-pgothic.woff2`、`theme.json`、`user.json`、`db.json`、`gy-img`、`graveyardLogo.png`、`IMG_7436.PNG`、`blooming-pixel-sakura-stockcake.webp` | S | `db.json` 要等 #5 做完 | C |
+| 16 | 🔸 删死文件 —— **只剩 `vite.svg`** | S | 2026-09-19 已删 11 个：`App.css`、`react.svg`、`theme.json`、`user.json`、`gy-img`、`graveyardLogo.png`、`IMG_7436.PNG`、樱花图、两份 `ms-pgothic.woff2`（随 D15）、**`db.json`**（#5 做完后零引用）。剩 `vite.svg` —— 它是 favicon，得先有一张方形图标才能换掉 | C |
 | 17 | 删死 CSS 变量：`--content-transition`、`--header-max-width`、`--interaction-paginate-link-color`、`--items-per-page` | S | 最后一个是 JS 概念放错在 CSS 里 | C |
-| 18 | 静态资源按 CONVENTIONS 重命名 + 目录重组（`themes/` `blocks/` `graves/` `fonts/`） | M | 映射表已列好；记得同步 `variables.css`、`seed.js`、`HomePage.tsx` | C |
-| 19 | CSS 变量重命名（`-img-url`/`-image-url` 混用、`seperator` 拼写） | S | | C |
+| 18 | ✅ ~~静态资源按 CONVENTIONS 重命名 + 目录重组~~ | M | 2026-09-19 完成：9 张图改成 `<角色>-<内容>`，重组为 `themes/yume2kki/`、`blocks/<blockID>/`、`blocks/_default/`。数据库旧路径已用 `server/migrate-asset-paths.js --apply` 迁移完成 | C |
+| 19 | ✅ ~~CSS 变量重命名（`-img-url`/`-image-url` 混用、`seperator` 拼写）~~ | S | 2026-09-19 完成：8 个变量改名 + 新增 `--modal-background-image`；CSS 里的值正式降级为「兜底默认值」 | C |
 | 20 | 选择器命名统一 kebab-case（`#headerIconContainer`、`.borderDecoration` 等） | S | | C |
+| 42 | ✅ ~~像素字体没接上~~ | S | 2026-09-19 收尾：`.Pixelify Sans.` 死回退随 D15 移除；`font-pixel` 类在 `index.css` 的 `@theme` 里声明成**复古等宽栈**（零下载），产物里已生成 `.font-pixel{font-family:var(--font-pixel)}`。以后要真像素字体，只需把拉丁像素 webfont 插到那行最前面 | C |
 | 21 | 列表接口瘦身：`GET /grave` 不返回每座墓碑的完整 `history` | S | 现在每翻一页都为每座墓碑多跑一次 Interaction 查询 | R#4 |
 | 22 | `PUT /grave` 改用 `!== undefined` 判断，支持把选填字段清空 | S | 现在传空字符串会被当成"没传" | R#7 |
 | 23 | 自由文本加 maxlength（`epitaph`、`memorial`、`content`） | S | | R#8 |
@@ -70,8 +72,9 @@
 
 | # | 任务 | 量 | 说明 | 出处 |
 |---|---|---|---|---|
-| 25 | **主题四套来源收敛**：DB 为唯一真源 → ThemeProvider 把值 `setProperty` 写进 `:root` → CSS 只留兜底 | L | 这是 Settings 一直做不下去的**根因**。顺带给 `Theme` 补 `closeButtonImage`、`modalHeaderColor` | C |
+| 25 | **主题四套来源收敛**：DB 为唯一真源 → ThemeProvider 把值 `setProperty` 写进 `:root` → CSS 只留兜底 | M | 方案已定稿（PRD **D14**，链路见 CONVENTIONS 第五节）。前端只碰 4 个文件（`AuthContext` / `ThemeContext` / `variables.css` / `ModalReuse`），**后端零逻辑改动** —— `GET /user/me` 早就 `populate("settings.theme")` 了，数据到了浏览器被 `AuthContext` 丢掉。**颜色部分的 CSS 两层结构已于 2026-09-19 落地**（PRD **D16**：调色盘 `--color-*` + 用途色派生），剩下的是给 `Theme` 补 `colors`（9 个）和 `closeButtonImage`、写 `applyTheme`。目标形态和完整示例见 CONVENTIONS 5.2 | C |
 | 26 | `Settings.tsx` 面板（主题切换 + 字号） | M | 依赖 #25。后端 API 早就齐了 | R#13 |
+| 43 | 🅿️ **主题可切换字体**（后期考虑，非承诺） | M | ⚠️ 受 **D15** 约束：**不要自托管整套 CJK 字库**，只给拉丁字母配小体积像素字体。给 `Theme` 加 `font: {family, url}`；`font-family` 改成读 `--font-body` 变量；用浏览器的 `FontFace` API 在运行时只加载当前主题那一个字体，失败就回退 CSS 默认值。**依赖 #2（已完成）和 #25**。⚠️ 注意归属：**字体属主题，字号属用户**（`User.settings.fontsize` 字段早就有了）——别把字号也塞进主题 | — |
 
 ---
 

@@ -66,9 +66,9 @@
 | `_id` | ObjectId | |
 | `blockID` | string | unique。路由用的字符串 ID，如 `"sea-1"` |
 | `name` | string | 显示名，如 `"大海區域"` |
-| `🔁 blockIconImage` | string | 首页入口图标。裸字符串，建议改成 ImageRef |
-| `🔁 graveIcon` | string | 该墓园的默认墓碑图标。裸字符串，且前端从未读取 |
-| `backgroundImage.url` | string | required。墓园背景图 |
+| `🔁 blockIconImage` | string | 首页入口图标（L0 里层里那个可点的图）。裸字符串，建议改成 ImageRef。**每座墓园应各有一张**，见 PRD D12 |
+| `🔁 graveIcon` | string | 该墓园的默认墓碑 sprite。裸字符串，且前端从未读取。**每座墓园应各有一张**（D12）；规格为横向两帧、宽＝高×2，见 CONVENTIONS 第三节「素材规格」 |
+| `backgroundImage.url` | string | required。墓园背景图（L1 里层 / L2 外层） |
 | `backgroundImage.styles` | string | JSON 字符串，如 `'{"backgroundSize":"cover"}'` |
 | `description` | string | 墓园描述 |
 | `➖ number` | number | **删除**。墓碑总数从不更新会失真，需要时用 `countDocuments` 实时算 |
@@ -139,14 +139,14 @@
 
 ## Theme（皮肤）`🅿️ 本轮预留`
 
-主题系统**本轮不做**，作为今后的功能预留。现状记录如下，改造方案见 CONVENTIONS.md「主题来源收敛」。
+主题系统**本轮不做**，作为今后的功能预留。现状记录如下，改造方案见 CONVENTIONS.md 第五节「主题取值链路」（PRD D14）。
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `name` | string | unique，如 `"yume2kki"` |
 | `backgroundImage` | `{url, styles}` | |
 | `borderImage` | `{url, styles}` | |
-| `homeImage` | `{url, styles}` | 前端从未使用 |
+| `🔁 containerImage` | `{url, styles}` | **原名 `homeImage`，改名见 PRD D13**。主题的容器图（L0 里层 / L1 外层），前端目前从未使用 |
 | `🅿️ closeButtonImage` | `{url, styles}` | 前端 ThemeContext 里叫 `quitImage`，DB 里没有 —— 将来补 |
 | `🅿️ modalHeaderColor` | string | 同上 |
 
