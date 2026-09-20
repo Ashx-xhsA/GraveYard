@@ -9,11 +9,22 @@
 @import './styles/right-panel.css';
 
 
-@font-face {
-  font-family: 'MS PGothic';
-  src: url('fonts/ms-pgothic.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
+/* 这里曾经有一个 @font-face，自托管 ms-pgothic.woff2（2MB）。
+   2026-09-19 移除，改用系统字体栈 —— 理由见 PRD D15：
+   CJK 字体因为字符集庞大天生瘦不下来，2MB 首屏成本换不回对等的视觉收益。
+   正文字体栈定义在 styles/layout.css。 */
 
+/* Tailwind v4 的自定义字体必须在 @theme 里声明，才会生成对应的工具类。
+   代码里早就在用 className="font-pixel"（墓园名、分页页码），但从来没声明过，
+   所以那个类一直什么也不做 —— 这就是 TODO #42。
+
+   现在把它定义成「复古等宽栈」：仍然零下载，但和正文的黑体拉开区别，
+   在英文/数字上有明显的终端感；CJK 会继续往后回落到系统字体，
+   Windows 上会落到 MS Gothic（小字号下本身就是点阵观感）。
+
+   以后若要真正的像素字体：按 D15 只给拉丁字母配一个小体积像素 webfont
+   （几十 KB），把它插在下面这行最前面即可，这 3 处会自动升级。 */
+@theme {
+  --font-pixel: ui-monospace, 'SF Mono', Menlo, Consolas, 'MS Gothic', monospace;
 }
 

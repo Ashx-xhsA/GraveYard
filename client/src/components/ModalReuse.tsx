@@ -9,7 +9,7 @@ interface Props {
 
 export const ModalReuse : React.FC<Props> = (props) => {
     const { style } = useTheme();
-    const quitImageSrc = style?.quitImage || "/quit.PNG";
+    const quitImageSrc = style?.quitImage || "/themes/yume2kki/close-button-red-cross.png";
     const {open, closeModal, content} = props; 
 
     useEffect(() => {

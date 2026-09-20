@@ -34,7 +34,7 @@ const HomePage = ({ blocks }: HomePageProps) => {
           >
             {/* 墓園 Icon (加入預設防呆) */}
             <img 
-              src={block.blockIconImage || '/themes/unknownplace.webp'} 
+              src={block.blockIconImage || '/blocks/_default/icon-question-mark.webp'}
               alt={block.name}
               className="w-24 h-24 sm:w-32 sm:h-32 object-contain drop-shadow-md"
             />

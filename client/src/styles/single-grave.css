@@ -13,7 +13,7 @@
   
 }
 #grave-info-container {
-  font-family: 'MS PGothic', sans-serif;
+  /* 这里原本又声明了一遍和 body 相同的字体栈，属于重复；字体会从 body 继承下来，删掉即可 */
   color: var(--grave-info-text-color);
   width: 100%;
   min-height: 100%;
@@ -79,7 +79,7 @@
 }
 #grave-interaction-container {
   border-top: 20px solid transparent;
-  border-image: var(--single-grave-seperator-image-url) 10 repeat !important;
+  border-image: var(--separator-border-image) 10 repeat !important;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
   
