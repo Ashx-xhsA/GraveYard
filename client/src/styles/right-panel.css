@@ -102,7 +102,7 @@
     height: auto;
     width: 100%;
     border-left: 20px solid transparent;
-    border-image: var(--border-image-url) 10 repeat !important;
+    border-image: var(--frame-border-image) 10 repeat !important;
     flex-direction: row;
   }
   .favorites-list {

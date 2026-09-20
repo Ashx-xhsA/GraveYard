@@ -2,23 +2,36 @@
 /* CSS Variables */
 /* ====================== */
 :root {
-  --bg-stretch-size: 210px;
+  /* 平铺纹理的放大尺寸。主题贴图都是 32×32，靠它放大后平铺（见 CONVENTIONS 二） */
+  --tile-size: 210px;
   --bg-overlay-color: black;
   --bg-overlay-opacity: 0.352;
 
   --content-transition: opacity 0.3s ease;
 
-  /* Image URLs */
-  --bg-img-url: url('/themes/containerbg.png');
-  /* --bg-img-url: url('/themes/containerbg-2.png'); */
-  --header-bg-img-url: url('/themes/containerbg.png');
-  --header-logo-img-url: url('/graveyardLogoTrimmed.png');
-  --border-image-url: url('/themes/border.png');
-  /* --grave-yard-bg-img-url: url('/themes/FishInSea.png'); */
-  --grave-yard-bg-img-url: url('/themes/containerbg-2.png');
-  --grave-img-url: url('/grave-1.png');
+  /* ---------------------------------------------------------------
+     主题图片（见 CONVENTIONS 一「图片分层模型」/ 六「主题取值链路」）
+     这里的值是**兜底默认值**：主题接上 DB 后，ThemeProvider 会用
+     setProperty 覆盖它们；没接上或请求失败时自动回落到这里，不会白屏。
+     --------------------------------------------------------------- */
 
-  --single-grave-seperator-image-url: url('/themes/border.png');
+  /* L0 外层背景 */
+  --page-background-image: url('/themes/yume2kki/background-pink-haze.png');
+  /* L0 里层容器背景 → 也是 L1 的外层背景 */
+  --container-background-image: url('/themes/yume2kki/container-blue-vortex.png');
+  /* container 描边 */
+  --frame-border-image: url('/themes/yume2kki/border-purple-flowers.png');
+  /* 详情页分隔线（与描边同图，但独立成一个变量，方便以后分开） */
+  --separator-border-image: url('/themes/yume2kki/border-purple-flowers.png');
+  /* 页头背景：占位，暂与外层背景同图，待单独设计 */
+  --header-background-image: url('/themes/yume2kki/background-pink-haze.png');
+  /* 弹窗面板背景：占位，暂与外层背景同图，待单独设计 */
+  --modal-background-image: url('/themes/yume2kki/background-pink-haze.png');
+  --header-logo-image: url('/themes/yume2kki/logo-graveyard-text.png');
+
+  /* 墓碑 sprite 的兜底（横向两帧，宽＝高×2）。真实值应来自
+     GyBlock.graveIcon / Grave.icon，接线见 TODO #33 */
+  --grave-sprite-image: url('/blocks/_default/grave-rip-stone.png');
 
   /* Layout */
   --header-max-width: 980px;
@@ -33,31 +46,65 @@
   --layout-height: 660px;
   --grave-list-height: 600px;
 
-  /* Colors */
-  --header-icon-button-text-color: rgb(119, 89, 114);
-  --header-icon-button-background-color: rgb(249, 228, 246);
-  --header-icon-button-text-shadow-color: white;
+  /* ===============================================================
+     颜色 · 第一层：调色盘（palette）
+     ---------------------------------------------------------------
+     整站只有这 9 个颜色是「原料」，下面第二层的每一个用途色都必须
+     从这里派生，不许再直接写 rgb(...)。
 
+     ⚠️ 主题要自定义的就是这一层（PRD D16）——ThemeProvider 只需
+     setProperty 覆盖这 9 个，第二层会自动全部跟着变。
+     =============================================================== */
+  --color-accent: rgb(119, 89, 114); /* 主色·紫。原本被重复写了 4 遍 */
+  --color-accent-soft: rgb(249, 228, 246); /* 主色的浅色搭档·淡粉 */
+  --color-ink: rgb(72, 86, 100); /* 正文墨色 */
+  --color-ink-strong: rgb(0, 0, 0); /* 最重的文字 */
+  --color-ink-alt: rgb(68, 76, 91); /* 次级文字（页脚） */
+  --color-shadow: rgb(79, 83, 86); /* 文字投影用的灰 */
+  --color-surface: rgb(225, 224, 224); /* 面板底色 */
+  --color-light: rgb(255, 255, 255); /* 白——深色底上的字 */
+  --color-overlay: black; /* 全屏遮罩 */
 
-  --single-grave-background-color: rgb(225, 224, 224);
-  --grave-info-text-color: rgb(0, 0, 0);
+  /* ===============================================================
+     颜色 · 第二层：用途色（semantic）
+     ---------------------------------------------------------------
+     命名照 CONVENTIONS：--{域}-{元素}-{属性}。
+     值**只能**是 var(--color-*)，这样「换一个主色」永远只改一处。
+     主题不存这一层。
+     =============================================================== */
+  --header-icon-button-text-color: var(--color-accent);
+  --header-icon-button-background-color: var(--color-accent-soft);
+  --header-icon-button-text-shadow-color: var(--color-light);
 
-  
-  --footer-text-color: rgb(68, 76, 91);
-  --user-info-text-color: rgb(255, 255, 255);
-  --user-info-text-shadow-color: rgb(79, 83, 86);
-  --favorites-text-color: rgb(255, 255, 255);
-  --favorites-text-shadow-color: rgb(79, 83, 86);
-  --right-panel-close-button-color: rgb(255, 255, 255);
-  --toggle-right-panel-button-color: rgb(255, 255, 255);
+  --single-grave-background-color: var(--color-surface);
+  --grave-info-text-color: var(--color-ink-strong);
 
-  --interaction-item-underline-color: rgb(119, 89, 114);
-  --interaction-item-text-color: rgb(72, 86, 100);
+  --footer-text-color: var(--color-ink-alt);
+  --user-info-text-color: var(--color-light);
+  --user-info-text-shadow-color: var(--color-shadow);
+  --favorites-text-color: var(--color-light);
+  --favorites-text-shadow-color: var(--color-shadow);
+  --right-panel-close-button-color: var(--color-light);
+  --toggle-right-panel-button-color: var(--color-light);
 
-  --interaction-paginate-link-color: rgb(72, 86, 100);
-  --interaction-paginate-link-hover-background-color:rgba(119, 89, 114, 0.1);
-  --interaction-paginate-link-selected-color: rgb(255, 255, 255);
-  --interaction-paginate-link-selected-background-color: rgb(119, 89, 114);
+  --interaction-item-underline-color: var(--color-accent);
+  --interaction-item-text-color: var(--color-ink);
+
+  /* ⚠️ 这个变量从未被任何 CSS 使用，待 #17 删除 */
+  --interaction-paginate-link-color: var(--color-ink);
+  /* hover 时的文字色。此前被 single-grave.css 使用却从未定义，
+     导致那条 color 整条失效（TODO #3）。hover 是「正常 → 选中」之间的
+     过渡态，所以用主色：紫字 + 10% 紫底，选中则是白字 + 实心紫底 */
+  --interaction-paginate-link-hover-color: var(--color-accent);
+  /* 主色的 10% 透明版。color-mix 让它跟着主色走；
+     写死 rgba(119,89,114,0.1) 的话，换主色时这里会掉队 */
+  --interaction-paginate-link-hover-background-color: color-mix(
+    in srgb,
+    var(--color-accent) 10%,
+    transparent
+  );
+  --interaction-paginate-link-selected-color: var(--color-light);
+  --interaction-paginate-link-selected-background-color: var(--color-accent);
 
   /* Numbers */
   --items-per-page: 10;

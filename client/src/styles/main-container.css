@@ -9,8 +9,8 @@
   border-top: none;
   width: calc(100% - var(--right-panel-width));
 
-  background-image: var(--grave-yard-bg-img-url);
-  background-size: var(--bg-stretch-size);
+  background-image: var(--container-background-image);
+  background-size: var(--tile-size);
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
