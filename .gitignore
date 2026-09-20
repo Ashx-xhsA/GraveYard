@@ -43,3 +43,10 @@ ehthumbs.db
 
 # Claude Code：skills 和 CLAUDE.md 入库共享，本机权限配置不入库
 .claude/settings.local.json
+
+# 文档：规格类入库（PRD / ROADMAP / TODO / CONVENTIONS / DATA-MODEL / REMINDERS / PROGRESS），
+# 过程产物只留本地 —— 计划文档和会话记录。各自的 README 说明目录怎么用，保留入库。
+docs/plans/*
+!docs/plans/README.md
+docs/claude/*
+!docs/claude/README.md

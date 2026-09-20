@@ -3,7 +3,7 @@
 > 已知但本轮不处理的问题，攒在这里方便日后查看。
 > 编号被 DATA-MODEL.md 引用（如「见 REMINDERS #3」），**调整顺序时别改编号**。
 >
-> 样式与静态资源相关的问题另见 **CONVENTIONS.md**，那边有详细的修复方案。
+> 样式与静态资源的**规定**见 **CONVENTIONS.md**；具体待办见 TODO.md。
 
 ## 数据与 API
 
@@ -31,15 +31,15 @@
 
 | # | 问题 | 位置 | 影响 |
 |---|---|---|---|
-| 13 | **`Settings.tsx` 是空壳** —— 只有一个 `<div>Settings</div>`，而后端主题/字号 API 全套就绪 | `components/Settings.tsx` | 主题功能做不下去的表层原因（根因见 CONVENTIONS.md「主题来源收敛」） |
+| 13 | **`Settings.tsx` 是空壳** —— 只有一个 `<div>Settings</div>`，而后端主题/字号 API 全套就绪 | `components/Settings.tsx` | 主题功能做不下去的表层原因（根因见 CONVENTIONS.md 第五节「主题取值链路」） |
 | 14 | **`About.tsx` 是空壳** —— 只有一个 `<h1>About</h1>`，但页脚已有链接指过去 | `components/About.tsx` | 点进去是空白页 |
 | 15 | **编辑 / 删除墓碑没有 UI** —— 后端 PUT / DELETE 都已实现 | 前端 | 建完墓碑就改不了了 |
-| 16 | **`Background.tsx` 读的是 mock 数据** —— 仍从 `client/db.json` 取背景，代码里自带注释「只寫了local的測試邏輯，等待修改」 | `components/Background.tsx` | 单墓碑页的外层背景永远是死数据。详见 CONVENTIONS.md |
+| 16 | **`Background.tsx` 读的是 mock 数据** —— 仍从 `client/db.json` 取背景，代码里自带注释「只寫了local的測試邏輯，等待修改」 | `components/Background.tsx` | 单墓碑页的外层背景永远是死数据。分层模型见 CONVENTIONS.md 第一节 |
 | 17 | **toast 提示组件还没做** —— 每日奖励发放后想提示「今天获得了一颗神奇的种子」，本轮决定先静默发放 | 前端 | 用户领到了东西但不知道。做好后献花成功之类也能复用 |
 
 ## 样式与静态资源
 
-详见 **CONVENTIONS.md**，那里有完整的诊断、重命名映射表和修复方案。摘要：
+规范见 **CONVENTIONS.md**；当时的诊断与重命名映射表见 `docs/claude/2026-09-19_fix-phase0-fix-existing-bugs_会话记录.md` 附录。摘要：
 
 | 问题 | 严重度 |
 |---|---|

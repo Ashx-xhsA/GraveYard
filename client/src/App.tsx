@@ -20,18 +20,23 @@ const router = createBrowserRouter([
         element: <MainContainer />,
         loader: mainContainerLoader,
       },
-      //特定坟墓页面
+      // L2 · 特定坟墓页面
+      // id 是给 useRouteLoaderData 用的名字：Background 组件长在 RootLayout 里、
+      // 是 <Outlet/> 的兄弟，拿不到子路由的 loader 数据，只能按名字去要。
+      // 顺带还兼任「当前在哪一层」的判断器——不在这条路由时取到的是 undefined。
       {
         path: ":blockid/:graveid",
+        id: "grave",
         element: <MainContainer />,
         loader: mainContainerLoader,
       },
-      //特定墓园页面
+      // L1 · 特定墓园页面
       {
-        path:":blockid",
+        path: ":blockid",
+        id: "block",
         element: <MainContainer />,
-        loader:mainContainerLoader,
-      }
+        loader: mainContainerLoader,
+      },
     ],
   },
   {

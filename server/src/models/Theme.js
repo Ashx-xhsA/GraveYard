@@ -12,9 +12,12 @@ const themeSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    // L0 外层背景
     backgroundImage: imageField,
+    // container 描边
     borderImage: imageField,
-    homeImage: imageField,
+    // L0 里层容器背景（= L1 的外层背景）。原名 homeImage，改名见 PRD D13
+    containerImage: imageField,
   },
   { timestamps: true },
 );

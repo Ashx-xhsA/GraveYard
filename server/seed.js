@@ -1,3 +1,5 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import User from "./src/models/User.js";
@@ -6,7 +8,10 @@ import GyBlock from "./src/models/GyBlock.js";
 import Interaction from "./src/models/Interaction.js";
 import Theme from "./src/models/Theme.js";
 
-dotenv.config();
+// 显式指向 server/.env —— 否则 `npm run seed`（从项目根跑）会去找根目录的 .env（不存在）
+dotenv.config({
+  path: path.join(path.dirname(fileURLToPath(import.meta.url)), ".env"),
+});
 
 await mongoose.connect(process.env.MONGO_URI);
 console.log("Connected to MongoDB");
@@ -27,9 +32,9 @@ if (!seaBlock) {
   seaBlock = new GyBlock({
     blockID: "sea-1",
     name: "大海區域",
-    blockIconImage: "/themes/unknownplace.webp",
+    blockIconImage: "/blocks/_default/icon-question-mark.webp",
     backgroundImage: {
-      url: "/themes/FishInSea.png",
+      url: "/blocks/sea-1/background-deep-sea-fish.png",
       styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}',
     },
     graveIcon: "",
@@ -39,9 +44,9 @@ if (!seaBlock) {
   await seaBlock.save();
   console.log("Created GyBlock: 大海區域");
 } else {
-  seaBlock.blockIconImage = "/themes/unknownplace.webp";
+  seaBlock.blockIconImage = "/blocks/_default/icon-question-mark.webp";
   seaBlock.backgroundImage = {
-    url: "/themes/FishInSea.png",
+    url: "/blocks/sea-1/background-deep-sea-fish.png",
     styles: '{"backgroundSize": "210px", "imageRendering": "pixelated"}',
   };
   await seaBlock.save();
@@ -53,9 +58,9 @@ if (!desertBlock) {
   desertBlock = new GyBlock({
     blockID: "desert-1",
     name: "荒原區域",
-    blockIconImage: "/themes/unknownplace.webp",
+    blockIconImage: "/blocks/_default/icon-question-mark.webp",
     backgroundImage: {
-      url: "/themes/desert.JPG",
+      url: "/blocks/desert-1/background-sand-dunes.jpg",
       styles:
         '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}',
     },
@@ -66,9 +71,9 @@ if (!desertBlock) {
   await desertBlock.save();
   console.log("Created GyBlock: 荒原區域");
 } else {
-  desertBlock.blockIconImage = "/themes/unknownplace.webp";
+  desertBlock.blockIconImage = "/blocks/_default/icon-question-mark.webp";
   desertBlock.backgroundImage = {
-    url: "/themes/desert.JPG",
+    url: "/blocks/desert-1/background-sand-dunes.jpg",
     styles:
       '{"backgroundSize": "cover", "backgroundPosition": "center", "imageRendering": "auto"}',
   };
@@ -168,9 +173,12 @@ if (createdGraves.length > 0) {
 const themes = [
   {
     name: "yume2kki",
-    backgroundImage: { url: "/themes/containerbg.png", styles: "" },
-    borderImage: { url: "/themes/border.png", styles: "" },
-    homeImage: { url: "/themes/containerbg-2.PNG", styles: "" },
+    backgroundImage: { url: "/themes/yume2kki/background-pink-haze.png", styles: "" },
+    borderImage: { url: "/themes/yume2kki/border-purple-flowers.png", styles: "" },
+    containerImage: {
+      url: "/themes/yume2kki/container-blue-vortex.png",
+      styles: "",
+    },
   },
 ];
 

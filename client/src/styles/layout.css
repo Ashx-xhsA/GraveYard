@@ -14,7 +14,12 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'MS PGothic', 'Pixelify Sans', sans-serif;
+  /* 系统字体栈：不下载任何字体文件，用访客设备上已有的。
+     浏览器按顺序逐字匹配 —— 前几个管拉丁字母，后几个管中日文，
+     各平台都能落到一个好看的：mac → PingFang / Hiragino，Windows → 微软雅黑，Android → Noto。
+     不使用自托管 webfont 的理由见 PRD D15。 */
+  font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 
 #root {
@@ -29,14 +34,14 @@ body {
 
 .borderDecoration {
   border: 20px solid transparent;
-  border-image: var(--border-image-url) 10 repeat !important;
+  border-image: var(--frame-border-image) 10 repeat !important;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
 
 #background {
-  background-image: var(--bg-img-url);
-  background-size: var(--bg-stretch-size);
+  background-image: var(--page-background-image);
+  background-size: var(--tile-size);
   image-rendering: pixelated;
 }
 

@@ -6,83 +6,81 @@ import GraveList from './GraveList';
 import { useAuth } from '../context/AuthContext';
 import GraveInfo from './GraveInfo';
 import api from '../api';
-// import tempData from '../../db.json'
 import HomePage from './HomePage';
 
-// const isTest = false; 
-//測試用
 export const loader = async ({ params }: any) => {
-  const { graveid,blockid } = params;
+  const { graveid, blockid } = params;
 
+  // L2 · 墓碑页 —— data: [graveID, 墓碑数据（含后端 populate 出来的 block）]
   if (graveid) {
-    // if (isTest){
-    //   const mockGraveDetail = tempData.graves.find((g) => g.graveID === graveid);
-    // return { type: 'detail', data: [graveid, mockGraveDetail || null] };
-    // }
     try {
       const res = await api.get(`/grave/${graveid}`);
-      return { type: 'detail', data: [graveid, res.data] };
+      return { page: 'grave', data: [graveid, res.data] };
     } catch {
-      return { type: 'detail', data: [graveid, null] };
+      return { page: 'grave', data: [graveid, null] };
     }
-  } else if (blockid) {
-    
-    //需要返回block的信息
-    //data[[墳墓列表]，block背景]
+  }
+
+  // L1 · 墓园页 —— data: [这座墓园里的墓碑列表, 这座墓园的背景图]
+  else if (blockid) {
     try {
-      const res = await api.get('/grave', { params: { limit: 100, block:blockid } });
+      const res = await api.get('/grave', { params: { limit: 100, block: blockid } });
       const gravesList = res.data.graves || [];
       const blockBgObj = res.data.blockInfo?.backgroundImage || null;
-      return { type: 'list', data: [gravesList, blockBgObj] };
+      return { page: 'block', data: [gravesList, blockBgObj] };
     } catch {
-      return { type: 'list', data: [] };
+      return { page: 'block', data: [] };
     }
-    
-    // if (isTest){
-    //   const mockGraves = tempData.graves;
-    //   return {type: 'list',data:[mockGraves,'/themes/desert.JPG']};
-    // }
   }
-  else if ( !graveid && !blockid){
-    // if(isTest){
-    //   return {type:'home',data:tempData.gyBlocks}
-    // }
+
+  // L0 · 首页 —— data: 全部墓园
+  else if (!graveid && !blockid) {
     try {
       const res = await api.get('/blocks');
-      return { type: 'home', data: res.data.blocks };
+      return { page: 'home', data: res.data.blocks };
     } catch {
-      return { type: 'home', data: [] };
+      return { page: 'home', data: [] };
     }
-    
   }
+
   //如果找不到路径跳转到主页
   return redirect('/');
 };
 
 interface LoaderData {
-  type: 'detail' | 'list' | 'home';
+  /** 当前在图片分层模型的哪一层（见 CONVENTIONS 第一节）：
+   *  'home' = L0 首页 ｜ 'block' = L1 墓园页 ｜ 'grave' = L2 墓碑页 */
+  page: 'home' | 'block' | 'grave';
   data: any;
 }
 
 const MainContainer = () => {
-  const { type, data } = useLoaderData() as LoaderData;
+  const { page, data } = useLoaderData() as LoaderData;
   const [currentPage, setCurrentPage] = useState(0);
   const { isRightPanelShow, toggleRightPanel } = useAuth();
   const { currentGraves, randomIndices, totalPages } = useGraveData(
-    type === 'list' ? (data[0] || []) : [],
+    page === 'block' ? (data[0] || []) : [],
     currentPage,
     isRightPanelShow
   );
   //如果是block則獲取背景
-  const blockBgObj = type === 'list' ? data[1] : undefined;
+  const blockBgObj = page === 'block' ? data[1] : undefined;
 
   //獲取url
   const blockImg = blockBgObj?.url;
-  //獲取styles
+  //獲取styles —— 數據庫裡存的是一段 JSON 字符串，例如
+  //'{"backgroundSize": "cover", "backgroundPosition": "center"}'
   const blockStylesString = blockBgObj?.styles;
-  const customStyles = typeof blockStylesString === 'string' && blockStylesString !== '' 
-    ? JSON.parse(blockStylesString) 
-    : {};
+  let customStyles: Record<string, string> = {};
+  try {
+    if (typeof blockStylesString === 'string' && blockStylesString !== '') {
+      customStyles = JSON.parse(blockStylesString);
+    }
+  } catch {
+    // 數據髒了也不要讓整頁白屏：JSON.parse 是在渲染期間拋錯的，
+    // 沒有 try/catch 的話這座墓園的列表頁會直接變空白。退回默認鋪法即可。
+    customStyles = {};
+  }
 
  
 
@@ -105,9 +103,9 @@ const MainContainer = () => {
         <IoMenuSharp />
       </button>
       {/* graveInfo page  */}
-      {type === 'detail' && <GraveInfo/>}
+      {page === 'grave' && <GraveInfo/>}
       {/* gravelist page */}
-      {type === 'list' && (
+      {page === 'block' && (
         <>
           <GraveList
             currentGraves={currentGraves}
@@ -139,7 +137,7 @@ const MainContainer = () => {
         </>
       )}
       {/* home page */}
-      {type === 'home' && <HomePage blocks = {data}/>}
+      {page === 'home' && <HomePage blocks = {data}/>}
     </div>
   );
 };

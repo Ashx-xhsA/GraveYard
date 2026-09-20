@@ -5,21 +5,33 @@
 
 ---
 
-**当前阶段**：Phase 0 · 止血 —— 线上正在坏着的东西
+**当前阶段**：Phase 0 · 重整 —— **代码部分已全部完成**，待浏览器与线上复验
 
 **上次做完**：
 - 2026-09-19 · 整理出 PRD / DATA-MODEL / CONVENTIONS / REMINDERS / TODO 五份文档，数据结构冻结
 - 2026-09-19 · 补了 `client/.env.example`；`client/vite.config.ts` 加了 `VITE_PROXY_TARGET` 代理
+- 2026-09-19 · **图片分层模型定稿**（PRD **D12/D13**）：CONVENTIONS 按模型重写，资源命名改成 `<角色>-<内容>`，新增 TODO #41 #42
+- 2026-09-19 · **主题取值链路定稿**（PRD **D14**）：DB 唯一真源 → `setProperty` 注入 CSS 变量 → CSS 兜底；#25 从 `L` 降为 `M`
+- 2026-09-19 · **#18 #19 落地 + #16 大部分**：9 张图改名重组、8 个 CSS 变量改名、删 9 个死文件；#1 顺带做完，数据库已跑 `migrate-asset-paths.js --apply`
+- 2026-09-19 · **CONVENTIONS 拆分**：只留「规定」，历史诊断 / 重命名映射 / 当前差距移入当天会话记录的附录 A–F
+- 2026-09-19 · **#2 字体**：先修好路径，发现字体文件 2MB 后**整个移除自托管字体，改用系统字体栈**（PRD **D15**）。现在项目不下载任何字体文件。「主题可切换字体」只讨论不做，立为 #43（🅿️ 后期），结论见会话记录附录 G
 
-**👉 下一步起点**：Phase 0 剩下的五条，约 1 小时
-1. #1 `seed.js` 里 `containerbg-2.PNG` → `.png` ← **线上 Linux 正在 404，先修这条**
-2. #2 `index.css` 的 `@font-face` 路径 `fonts/…` → `/fonts/…`
-3. #3 补 `--interaction-paginate-link-hover-color`
-4. #4 补 `server/.env.example`（`MONGO_URI`、`JWT_SECRET`）—— client 那份已完成
-5. #5 `Background.tsx` 改成从 API 取背景，不再读 `db.json`
+- 2026-09-19 · **#42 收尾**：`font-pixel` 类用 `@theme` 声明成复古等宽栈（零下载），墓园名和分页页码现在真的会用它
+- 2026-09-19 · **颜色改成调色盘 + 派生两层**（PRD **D16**）：9 个 `--color-*` 是原料，19 个用途色全从它派生。纯重构、零视觉变化（逐变量比对过）。#25 的 `Theme` 表因此从 19 个颜色字段降到 9 个；主题写法示例见 CONVENTIONS 5.2
 
-前四条都是一两行的改动，直接动手即可，不必先 `/make-plan`。#5 稍大，不确定就先 `/make-plan`。
+- 2026-09-19 · **Phase 0 收尾**：#3 补 hover 颜色（派生自主色）、#5 + #41 重写 `Background.tsx`（三层背景各就各位，`db.json` 自此零引用）。#4 经你决定跳过。
+  顺带把 loader 的 `type: 'list'|'detail'` 统一成 `page: 'block'|'grave'`，和路由 id、URL 三层、数据模型同一套词
 
-**卡住 / 待决定**：无
+**👉 下一步起点**：**先用眼睛验收 Phase 0**，再进 Phase 1。
 
-**当前分支**：`docs/prd-and-conventions`（只装文档改动；开始改代码前应另开分支）
+需要你在浏览器里确认的四条（我没有浏览器驱动，只验到 HTTP 层）：
+1. `/` → `/sea-1` → `/sea-1/grave_1` 三层走一遍，外层背景依次是「粉紫雾斑 → 深蓝漩涡 → 深海鱼群」
+2. `/desert-1/<任意墓碑>` 的外层背景是**铺满**的沙丘照片，不是小块平铺
+3. 分页数字 hover 时文字变紫、底色是淡紫
+4. F12 Network：`Font` 一条请求都没有，`Img` 没有红色
+
+验完若没问题，Phase 1（地基冻结）的第一件事是 **#13 建 `client/src/types.ts`** —— 它是后面所有字段重命名的安全网。
+
+**卡住 / 待决定**：无 —— CONVENTIONS 全篇已定稿（图片分层 + 主题链路）。
+
+**当前分支**：`fix/phase0-fix-existing-bugs`
