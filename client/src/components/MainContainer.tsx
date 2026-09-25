@@ -52,7 +52,7 @@ const MainContainer = () => {
   const data = useLoaderData() as LoaderData;
   const { page } = data;
   const [currentPage, setCurrentPage] = useState(0);
-  const { isRightPanelShow, toggleRightPanel } = useAuth();
+  const { isLoggedIn, isRightPanelShow, toggleRightPanel } = useAuth();
   const { currentGraves, randomIndices, totalPages } = useGraveData(
     data.page === 'block' ? data.graves : [],
     currentPage,
@@ -90,13 +90,16 @@ const MainContainer = () => {
       }}
 
     >
-      <button
-        id="toggle-right-panel-button"
-        onClick={toggleRightPanel}
-        className="absolute top-4 right-4 z-10 text-xl cursor-pointer bg-transparent border-None"
-      >
-        <IoMenuSharp />
-      </button>
+      {/* The right panel only has content for signed-in users. */}
+      {isLoggedIn && (
+        <button
+          id="toggle-right-panel-button"
+          onClick={toggleRightPanel}
+          className="absolute top-4 right-4 z-10 text-xl cursor-pointer bg-transparent border-None"
+        >
+          <IoMenuSharp />
+        </button>
+      )}
       {/* graveInfo page  */}
       {page === 'grave' && <GraveInfo/>}
       {/* gravelist page */}
