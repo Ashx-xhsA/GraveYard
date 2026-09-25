@@ -39,7 +39,6 @@ if (!seaBlock) {
     },
     graveIcon: "",
     description: "靠近大陆与大洋连接的水域",
-    number: 2,
   });
   await seaBlock.save();
   console.log("Created GyBlock: 大海區域");
@@ -66,7 +65,6 @@ if (!desertBlock) {
     },
     graveIcon: "",
     description: "一堆破烂的偶像，承受着太阳的鞭打",
-    number: 0,
   });
   await desertBlock.save();
   console.log("Created GyBlock: 荒原區域");
@@ -143,22 +141,22 @@ await Interaction.deleteMany({ user: user._id });
 if (createdGraves.length > 0) {
   const interactions = [
     {
-      graveId: createdGraves[0]._id, // 留給小空的有线耳机
-      type: "flower",
-      variety: "洗衣液",
+      grave_id: createdGraves[0]._id, // 留給小空的有线耳机
+      type: "item",
+      itemName: "洗衣液",
       quantity: 1,
       user: user._id,
     },
 
     {
-      graveId: createdGraves[1]._id, // 留給墙外世界的幻想
-      type: "flower",
-      variety: "地鳴",
+      grave_id: createdGraves[1]._id, // 留給墙外世界的幻想
+      type: "item",
+      itemName: "地鳴",
       quantity: 999,
       user: user._id,
     },
     {
-      graveId: createdGraves[1]._id,
+      grave_id: createdGraves[1]._id,
       type: "message",
       content: "我踏馬萊啦",
       user: user._id,
@@ -166,7 +164,7 @@ if (createdGraves.length > 0) {
   ];
 
   await Interaction.insertMany(interactions);
-  console.log("Created interactions (flowers and messages).");
+  console.log("Created interactions (offerings and messages).");
 }
 
 // Themes
