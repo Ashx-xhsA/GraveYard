@@ -33,6 +33,8 @@ const graveSchema = new mongoose.Schema(
     },
     memorial: String,
     photos: [String],
+    // Custom grave sprite chosen at creation. Cannot be changed afterwards.
+    icon: { type: String, default: "" },
     // Interaction
     user: {
       type: mongoose.Schema.Types.ObjectId,

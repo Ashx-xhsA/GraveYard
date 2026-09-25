@@ -3,33 +3,9 @@ import Grave from "../models/Grave.js";
 import Interaction from "../models/Interaction.js";
 import GyBlock from "../models/GyBlock.js";
 import { verifyToken } from "../middleware/auth.js";
+import { buildGraveDetail } from "../lib/graveDetail.js";
 
 const router = express.Router();
-
-// Helper function to fill up interaction field in graves
-export const populateInteractions = async (grave) => {
-  if (!grave) return null;
-  const interactions = await Interaction.find({ graveId: grave._id })
-    .populate("user", "username")
-    .sort({
-      createdAt: 1,
-    });
-  const totalFlowers = interactions
-    .filter((i) => i.type === "flower")
-    .reduce((sum, i) => sum + (i.quantity || 1), 0);
-  const totalMessages = interactions.filter((i) => i.type === "message").length;
-
-  return {
-    ...grave.toObject(),
-    interaction: {
-      stats: {
-        totalFlowers,
-        totalMessages,
-      },
-      history: interactions,
-    },
-  };
-};
 
 // Get the graves from a certain block
 router.get("/", async (req, res) => {
@@ -62,7 +38,7 @@ router.get("/", async (req, res) => {
       .skip((pageNum - 1) * limitNum)
       .sort({ createdAt: -1 });
     const populatedGraves = await Promise.all(
-      graves.map((grave) => populateInteractions(grave)),
+      graves.map((grave) => buildGraveDetail(grave)),
     );
     const total = await Grave.countDocuments(filter);
     return res.json({
@@ -79,16 +55,13 @@ router.get("/", async (req, res) => {
 });
 
 // Get single grave by ID
-router.get("/:graveId", async (req, res) => {
+router.get("/:graveID", async (req, res) => {
   try {
-    const grave = await Grave.findOne({ graveID: req.params.graveId })
-      .populate("user", "username")
-      .populate("block");
+    const grave = await Grave.findOne({ graveID: req.params.graveID });
     if (!grave) {
       return res.status(404).json({ error: "Grave not found." });
     }
-    const populatedGrave = await populateInteractions(grave);
-    return res.json(populatedGrave);
+    return res.json(await buildGraveDetail(grave));
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error." });
@@ -105,7 +78,7 @@ const generateGraveID = async () => {
 // Post a new grave
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const { name, birth, death, epitaph, burial, memorial, photos, block } =
+    const { name, birth, death, epitaph, burial, memorial, photos, icon, block } =
       req.body;
     if (!name || !birth || !death || !block) {
       return res
@@ -122,12 +95,12 @@ router.post("/", verifyToken, async (req, res) => {
       burial,
       memorial,
       photos: photos || [],
+      icon,
       block,
       user: req.userId,
     });
     await grave.save();
-    const populatedGrave = await populateInteractions(grave);
-    return res.status(201).json(populatedGrave);
+    return res.status(201).json(await buildGraveDetail(grave));
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error." });
@@ -135,15 +108,16 @@ router.post("/", verifyToken, async (req, res) => {
 });
 
 // Update grave
-router.put("/:graveId", verifyToken, async (req, res) => {
+router.put("/:graveID", verifyToken, async (req, res) => {
   try {
-    const grave = await Grave.findOne({ graveID: req.params.graveId });
+    const grave = await Grave.findOne({ graveID: req.params.graveID });
     if (!grave) {
       return res.status(404).json({ error: "Grave not found." });
     }
     if (grave.user.toString() !== req.userId) {
       return res.status(403).json({ error: "This is someone else's grave." });
     }
+    // `icon` is intentionally not updatable: it is fixed when the grave is created.
     const { name, birth, death, epitaph, burial, memorial, photos, block } =
       req.body;
     if (name) grave.name = name;
@@ -155,8 +129,7 @@ router.put("/:graveId", verifyToken, async (req, res) => {
     if (photos) grave.photos = photos;
     if (block) grave.block = block;
     await grave.save();
-    const populatedGrave = await populateInteractions(grave);
-    return res.json(populatedGrave);
+    return res.json(await buildGraveDetail(grave));
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error." });
@@ -164,16 +137,17 @@ router.put("/:graveId", verifyToken, async (req, res) => {
 });
 
 // Delete grave
-router.delete("/:graveId", verifyToken, async (req, res) => {
+router.delete("/:graveID", verifyToken, async (req, res) => {
   try {
-    const grave = await Grave.findOne({ graveID: req.params.graveId });
+    const grave = await Grave.findOne({ graveID: req.params.graveID });
     if (!grave) {
       return res.status(404).json({ error: "Grave not found." });
     }
     if (grave.user.toString() !== req.userId) {
       return res.status(403).json({ error: "This is someone else's grave." });
     }
-    await Interaction.deleteMany({ graveId: grave._id });
+    await Interaction.deleteMany({ grave_id: grave._id });
+    await grave.populate([{ path: "user", select: "username" }, { path: "block" }]);
     await grave.deleteOne();
     return res.json({ message: "Your grave has been removed.", grave });
   } catch (error) {

@@ -1,9 +1,11 @@
 import { useLoaderData } from 'react-router-dom';
 import InteractionPaginateContainer from './InteractionPaginateContainer';
+import type { LoaderData } from './MainContainer';
+
+type GraveLoaderData = Extract<LoaderData, { page: 'grave' }>;
 
 const GraveInfo = () => {
-  const { data } = useLoaderData() as any;
-  const [, graveData] = data;
+  const { grave: graveData } = useLoaderData() as GraveLoaderData;
 
   if (!graveData) {
     return <div id="single-grave-container"><p>Grave not found.</p></div>;

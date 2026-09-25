@@ -30,10 +30,6 @@ const gyBlockSchema = new mongoose.Schema(
     },
     // 墓園描述
     description: String,
-
-    //此墓園的總共坟墓數量
-    number: Number,
-
   },
   { timestamps: true }
 );

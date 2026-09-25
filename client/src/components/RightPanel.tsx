@@ -2,8 +2,9 @@ import Info from './Info';
 import Favorites from './Favorites';
 import { IoCloseSharp } from "react-icons/io5";
 import { useAuth } from '../context/AuthContext';
+import type { CurrentUser } from '../types';
 
-const RightPanel = ({ user }: { user: any }) => {
+const RightPanel = ({ user }: { user: CurrentUser | null }) => {
   const { toggleRightPanel } = useAuth();
   return (
     <div id="right-panel" className="shrink-0 borderDecoration">

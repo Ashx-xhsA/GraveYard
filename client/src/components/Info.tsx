@@ -1,4 +1,6 @@
-const Info = ({ user }: { user: any }) => {
+import type { CurrentUser } from '../types';
+
+const Info = ({ user }: { user: CurrentUser }) => {
   return (
     <div id="info">
       <p>Name: {user.username}</p>

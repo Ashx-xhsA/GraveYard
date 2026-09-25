@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import type { FormEvent } from 'react';
+import { isAxiosError } from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useModal } from '../context/ModalContext';
 import { useTheme } from '../context/ThemeContext';
@@ -15,7 +17,7 @@ const Login = () => {
   const modalHeaderColor = useTheme()?.style?.modalHeaderColor ?? "#8a63a6";
  
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -29,8 +31,9 @@ const Login = () => {
       setUsername('');
       setPassword('');
       closeModal();
-    } catch (err: any) {
-      setError(err.response?.data?.error || (isRegisterMode ? 'Registration failed' : 'Login failed'));
+    } catch (err) {
+      const message = isAxiosError(err) ? err.response?.data?.error : undefined;
+      setError(message || (isRegisterMode ? 'Registration failed' : 'Login failed'));
     } finally {
       setLoading(false);
     }

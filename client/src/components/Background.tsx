@@ -1,4 +1,5 @@
 import { useRouteLoaderData } from 'react-router-dom';
+import type { LoaderData } from './MainContainer';
 
 /**
  * 最外层的全屏背景（图片分层模型的「外层」，见 CONVENTIONS 第一节）。
@@ -13,26 +14,15 @@ import { useRouteLoaderData } from 'react-router-dom';
  * 所以用 useRouteLoaderData 按路由 id 去要（id 定义在 App.tsx）。
  * 取不到值就说明不在那一层，于是它同时也是「当前在哪一层」的判断器。
  */
-/** 墓园背景图在数据库里的形状：`GyBlock.backgroundImage` */
-interface BlockBackground {
-  url?: string;
-  /** 一段 JSON 字符串，如 '{"backgroundSize":"cover"}' */
-  styles?: string;
-}
-
-/** 墓碑页 loader 的返回：{ page: 'grave', data: [graveID, 墓碑数据] } */
-interface GraveRouteData {
-  data?: [string, { block?: { backgroundImage?: BlockBackground } } | null];
-}
+type GraveLoaderData = Extract<LoaderData, { page: 'grave' }>;
 
 const Background = () => {
   // 在墓碑页才有值，否则 undefined
-  const graveRoute = useRouteLoaderData('grave') as GraveRouteData | undefined;
+  const graveRoute = useRouteLoaderData('grave') as GraveLoaderData | undefined;
   // 在墓园页才有值，否则 undefined。这里只判断「有没有」，不需要知道里面是什么
   const blockRoute = useRouteLoaderData('block');
 
-  // 墓碑页 loader 返回 { page: 'grave', data: [graveID, 墓碑数据] }
-  const grave = graveRoute?.data?.[1];
+  const grave = graveRoute?.grave;
   // 后端 GET /grave/:graveId 已经 populate 了 block，所以整个墓园对象就挂在这儿
   const blockBackground = grave?.block?.backgroundImage;
 

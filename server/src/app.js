@@ -18,7 +18,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/grave", graveRoutes);
-app.use("/api/grave/:graveId", interactionRoutes);
+app.use("/api/grave/:graveID", interactionRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/blocks", blockRoutes);
 app.use("/api/theme", themeRoutes);
