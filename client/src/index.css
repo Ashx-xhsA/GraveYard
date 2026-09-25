@@ -7,6 +7,7 @@
 @import './styles/grave-list.css';
 @import './styles/single-grave.css';
 @import './styles/right-panel.css';
+@import './styles/toast.css';
 
 
 /* 这里曾经有一个 @font-face，自托管 ms-pgothic.woff2（2MB）。
