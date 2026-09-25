@@ -36,9 +36,11 @@
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `kind` | `"flower"` \| `"item"` | 区分来源和显示：花有固定品种名和专属图标、来自地图拾取；物品自由命名、来自每日奖励 |
-| `name` | string | 花 = 固定品种名（"郁金香"）；物品 = 用户取的名字，未命名则为 `""` |
+| `name` | string | 花 = 固定品种的**稳定 key**（`"orchid"`，显示名由前端字典翻译，PRD **D19**）；物品 = 用户取的名字，未命名则为 `""` |
 | `count` | number | 同 kind 同 name 的合并成一条 |
 
+> **初始值**（2026-09-25，PRD **D18**）：注册时 `inventory = [{kind:"flower", name:"orchid", count:5}]`，常量在 `server/src/lib/inventory.js`。扣到 0 的条目会被删除，不留「×0」。
+>
 > **背包保留 `kind`，但互动记录不保留**——因为背包需要知道「这是花还是物品」来决定图标和能不能命名；而一旦放到墓碑上，两者都只是"放着的东西"，不需要再区分（见 Interaction）。
 
 ### 物品命名：在背包里点按钮命名
@@ -114,7 +116,7 @@
 
 1. **统计变简单**：「这里放着 N 个东西」= 所有 `type:"item"` 的 `quantity` 求和，不用再分两类。
 2. **想给花显示专属图标**，可以靠 `itemName` 反查品种表（`itemName ∈ FlowerVariety` → 是花）。缺点是用户把物品也取名叫"郁金香"时会认错，但无伤大雅。
-3. **献花和献物品是同一个操作** ——「从背包拿 N 个 X 放到墓碑上」。已决定把原计划的 `POST /flowers` + `POST /items` 合并成单个 **`POST /api/grave/:graveID/offerings`**，body `{ itemName, quantity }`。
+3. **献花和献物品是同一个操作** ——「从背包拿 N 个 X 放到墓碑上」。已决定把原计划的 `POST /flowers` + `POST /items` 合并成单个 **`POST /api/grave/:graveID/offerings`**，body `{ kind, itemName, quantity }`（2026-09-25 落地时加了 `kind`：背包里「花·orchid」和「起名叫 orchid 的物品」是两条记录，只凭名字分不清扣哪条）。
 
 > **命名风格**：`itemName` 用 camelCase，与 `blockIconImage`、`graveIcon`、`graveID` 一致。`grave_id` 是这份 schema 里唯一的下划线写法，作为**例外保留**——它存的就是 `_id`，写成 `grave_id` 正好呼应。
 
@@ -200,7 +202,9 @@
 | `GET /api/blocks/:blockID` | `{ block: GyBlock }` |
 | `POST /api/auth/login` | `{ token, userId }` |
 | `GET /api/user/me` | `{ user: {id, username, email, settings, favorites, role, inventory}, gravesCreated, interactionsMade }`（`role`、`inventory` 2026-09-25 已加） |
-| `🔁 POST /api/grave/:graveID/offerings` \| `/messages` | `{ message, interaction, graveStats }` ➕ 合并原 `/flowers` + 计划中的 `/items`；响应里带上 `inventory`，省掉前端再请求一次背包 |
+| `POST /api/grave/:graveID/offerings` | ✅ 2026-09-25。body `{ kind, itemName, quantity }` → `201 { message, interaction, graveStats, inventory }`。带上 `inventory` 省掉前端再请求一次背包。失败：`400 INVALID_OFFERING`（含 `itemName` 为空，即未命名物品）/ `404 GRAVE_NOT_FOUND` / `400 INSUFFICIENT_QUANTITY` |
+| `POST /api/grave/:graveID/messages` | body `{ content }`（去首尾空格）→ `201 { message, interaction, graveStats }`。空内容 `400 EMPTY_MESSAGE` |
+| 错误响应（`routes/interaction.js`） | `{ error, code }`：`code` 供前端查字典显示（PRD **D19**），`error` 是给日志看的英文。其余路由随 TODO #47 补 |
 | `➕ POST /api/user/me/inventory/name` | 给未命名物品命名，返回更新后的 `inventory` |
 | `➕ POST /api/user/me/daily-reward` | body `{ localDate: "2026-09-19" }` → `{ granted: boolean, inventory }`。前端启动时自动调，不需要用户点 |
 
@@ -268,4 +272,4 @@
 | 5 | 每日奖励怎么触发 | **自动发放**。前端启动时自动调 `POST /user/me/daily-reward`，用户不用点 |
 | 6 | 隔几天没来要补发吗 | **只发 1 个**，不按天数累积 |
 | 7 | 「每天」怎么算 | **前端传本地日期**（`YYYY-MM-DD`），后端与 `lastRewardDate` 对比。零时区逻辑、体验最准；可被伪造但本来就不防刷 |
-| 8 | 发放后怎么提示用户 | **toast，本轮只计划不做**。先静默发放，组件以后再补（献花成功之类也能复用） |
+| 8 | 发放后怎么提示用户 | **toast**。组件已于 2026-09-25 随 #37 落地，献上/留言成功已在用 |
