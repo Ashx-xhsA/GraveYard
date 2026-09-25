@@ -41,6 +41,9 @@ ehthumbs.db
 .next/
 .cache/
 
+# Database backups written by migration scripts (contain user data)
+server/backups/
+
 # Claude Code：skills 和 CLAUDE.md 入库共享，本机权限配置不入库
 .claude/settings.local.json
 

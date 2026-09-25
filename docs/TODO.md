@@ -29,13 +29,13 @@
 
 | # | 任务 | 量 | 说明 | 出处 |
 |---|---|---|---|---|
-| 6 | `Interaction` 改造：`type`→`"message"\|"item"`、`variety`→`itemName`、`graveId`→`grave_id`、`quantity` 加 `default:1` | M | 花和物品合并成 `item` | D |
-| 7 | `User` 改造：➕`role` ➕`inventory[]` ➕`lastRewardDate` | S | 背包和管理员的地基 | D |
-| 8 | `Grave` ➕`icon`；`GyBlock` ➖`number` | S | | D |
-| 9 | **写数据迁移脚本**（或直接清库重新 seed） | M | ⚠️ 6–8 会让现有数据对不上字段，这步别漏 | — |
-| 10 | 统一 `totalFlowers` 的两套算法，抽成同一个 stats 函数 | S | 现在同名字段两个值：献 99 朵花，详情页显示 99、献花响应返回 1，**页面数字会跳变** | R#5 |
-| 11 | 所有对外响应统一 populate `user` | S | 去掉前端那串 `item.user?.username \|\| item.user \|\| 'Unknown'` 兜底 | R#6 |
-| 12 | 路由参数大小写统一（后端 `:graveId` / 前端 `:graveid`） | S | | R#10 |
+| 6 | ✅ ~~`Interaction` 改造：`type`→`"message"\|"item"`、`variety`→`itemName`、`graveId`→`grave_id`、`quantity` 加 `default:1`~~ | M | 花和物品合并成 `item` | D |
+| 7 | ✅ ~~`User` 改造：➕`role` ➕`inventory[]` ➕`lastRewardDate`~~ | S | 背包和管理员的地基 | D |
+| 8 | ✅ ~~`Grave` ➕`icon`；`GyBlock` ➖`number`~~ | S | | D |
+| 9 | ✅ ~~写数据迁移脚本（或直接清库重新 seed）~~ | M | ⚠️ 6–8 会让现有数据对不上字段，这步别漏 | — |
+| 10 | ✅ ~~统一 `totalFlowers` 的两套算法，抽成同一个 stats 函数~~ | S | 现在同名字段两个值：献 99 朵花，详情页显示 99、献花响应返回 1，**页面数字会跳变** | R#5 |
+| 11 | ✅ ~~所有对外响应统一 populate `user`~~ | S | 去掉前端那串 `item.user?.username \|\| item.user \|\| 'Unknown'` 兜底 | R#6 |
+| 12 | ✅ ~~路由参数大小写统一（后端 `:graveId` / 前端 `:graveid`）~~ | S | | R#10 |
 
 ---
 
@@ -45,8 +45,8 @@
 
 | # | 任务 | 量 | 说明 | 出处 |
 |---|---|---|---|---|
-| 13 | 建 `client/src/types.ts`，把 DATA-MODEL 里的类型落成代码，替掉组件里的 `any` | M | 现在 `graveData: any`、`interaction: any`、`favorites: any` 全靠记忆 | R#12 |
-| 14 | loader 返回值：元组 → 具名可辨识联合 | S | 不用再靠 `data[0]` / `const [, graveData] = data` 取值 | D |
+| 13 | ✅ ~~建 `client/src/types.ts`，把 DATA-MODEL 里的类型落成代码，替掉组件里的 `any`~~ | M | 现在 `graveData: any`、`interaction: any`、`favorites: any` 全靠记忆 | R#12 |
+| 14 | ✅ ~~loader 返回值：元组 → 具名可辨识联合~~ | S | 不用再靠 `data[0]` / `const [, graveData] = data` 取值 | D |
 | 15 | 图片字段统一成 `ImageRef {url, styles?}` | M | `backgroundImage` 是对象，`blockIconImage`/`graveIcon`/`photos` 是裸字符串 | R#11 |
 
 ---
@@ -65,6 +65,7 @@
 | 22 | `PUT /grave` 改用 `!== undefined` 判断，支持把选填字段清空 | S | 现在传空字符串会被当成"没传" | R#7 |
 | 23 | 自由文本加 maxlength（`epitaph`、`memorial`、`content`） | S | | R#8 |
 | 24 | `email` 幽灵字段：补回 schema 或删掉 `select("email")` 和前端引用 | S | | R#2 |
+| 44 | **lint 清零**：`main` 上 `npm run lint` 从未通过（2026-09-25 实测 33 个错，Phase 1 顺带降到 12 个） | M | 剩余三类：① `react-refresh/only-export-components` ×7（组件文件里同时导出 loader / context / hook，要拆文件）② React 19 新规则 ×2（`AuthContext` 的 effect 里同步 setState、`useGraveData` 渲染时调 `Math.random`）③ `ThemeContext` 的 `any` ×3（随 #25 消失）。清零之前「lint 通过」没法当验收标准 | — |
 
 ---
 
@@ -85,7 +86,7 @@
 
 | # | 任务 | 量 | 说明 | 出处 |
 |---|---|---|---|---|
-| 27 | 后端：`POST /grave/:graveId/offerings`（合并原 `/flowers`）+ 扣背包 | M | 依赖 P1 | P |
+| 27 | 后端：`POST /grave/:graveID/offerings`（合并原 `/flowers`）+ 扣背包 | M | 依赖 P1 | P |
 | 28 | 前端：详情页**献上 UI** + **留言 UI** | M | 留言后端也早就有了，前端同样没入口 | P |
 | 29 | 详情页统计改造：`totalOfferings` +「这里放着 N 个东西」+ 按名字分组明细 | S | | P |
 | 30 | 每日奖励：`POST /user/me/daily-reward`（前端启动自动调，带本地日期） | M | | P 2.1 |

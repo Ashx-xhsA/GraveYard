@@ -114,7 +114,7 @@
 
 1. **统计变简单**：「这里放着 N 个东西」= 所有 `type:"item"` 的 `quantity` 求和，不用再分两类。
 2. **想给花显示专属图标**，可以靠 `itemName` 反查品种表（`itemName ∈ FlowerVariety` → 是花）。缺点是用户把物品也取名叫"郁金香"时会认错，但无伤大雅。
-3. **献花和献物品是同一个操作** ——「从背包拿 N 个 X 放到墓碑上」。已决定把原计划的 `POST /flowers` + `POST /items` 合并成单个 **`POST /api/grave/:graveId/offerings`**，body `{ itemName, quantity }`。
+3. **献花和献物品是同一个操作** ——「从背包拿 N 个 X 放到墓碑上」。已决定把原计划的 `POST /flowers` + `POST /items` 合并成单个 **`POST /api/grave/:graveID/offerings`**，body `{ itemName, quantity }`。
 
 > **命名风格**：`itemName` 用 camelCase，与 `blockIconImage`、`graveIcon`、`graveID` 一致。`grave_id` 是这份 schema 里唯一的下划线写法，作为**例外保留**——它存的就是 `_id`，写成 `grave_id` 正好呼应。
 
@@ -156,7 +156,7 @@
 
 ## GraveDetail —— 最核心的一个
 
-`GET /api/grave/:graveId` **直接返回这个对象**（没有外层包装）。
+`GET /api/grave/:graveID` **直接返回这个对象**（没有外层包装）。
 它 = Grave 文档 + populate + `populateInteractions()` 现拼出来的 `interaction` 字段。
 
 | 字段 | 类型 | 来源 | 说明 |
@@ -178,7 +178,7 @@
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `_id` `grave_id` `type` `itemName` `quantity` `content` `createdAt` | — | 同 Interaction schema |
-| `user` | `{_id, username}` 或 ObjectId | 形状不稳定，见 REMINDERS #6 |
+| `user` | `{_id, username}` \| `null` | 2026-09-25 起所有接口统一 populate。`null` 仅在作者账号已不存在时出现 |
 
 ## 其它响应
 
@@ -199,12 +199,12 @@
 | `GET /api/blocks` | `{ blocks: GyBlock[] }` |
 | `GET /api/blocks/:blockID` | `{ block: GyBlock }` |
 | `POST /api/auth/login` | `{ token, userId }` |
-| `GET /api/user/me` | `{ user: {id, username, email, settings, favorites}, gravesCreated, interactionsMade }` ➕ 目标加 `inventory`、`role` |
-| `🔁 POST /api/grave/:graveId/offerings` \| `/messages` | `{ message, interaction, graveStats }` ➕ 合并原 `/flowers` + 计划中的 `/items`；响应里带上 `inventory`，省掉前端再请求一次背包 |
+| `GET /api/user/me` | `{ user: {id, username, email, settings, favorites, role, inventory}, gravesCreated, interactionsMade }`（`role`、`inventory` 2026-09-25 已加） |
+| `🔁 POST /api/grave/:graveID/offerings` \| `/messages` | `{ message, interaction, graveStats }` ➕ 合并原 `/flowers` + 计划中的 `/items`；响应里带上 `inventory`，省掉前端再请求一次背包 |
 | `➕ POST /api/user/me/inventory/name` | 给未命名物品命名，返回更新后的 `inventory` |
 | `➕ POST /api/user/me/daily-reward` | body `{ localDate: "2026-09-19" }` → `{ granted: boolean, inventory }`。前端启动时自动调，不需要用户点 |
 
-> `graveStats` 的算法和 `GraveDetail.interaction.stats` 不一致，见 REMINDERS #5。
+> `graveStats` 与 `GraveDetail.interaction.stats` 形状相同、算法相同 —— 两者都来自 `server/src/lib/graveDetail.js` 的 `computeStats`（2026-09-25 统一，原 REMINDERS #5）。
 
 ---
 
@@ -212,25 +212,18 @@
 
 ## MainContainer loader 返回值
 
-现状：三种 type 共用一个 `data` 字段，但形状各不相同（靠下标取值）——
+✅ **2026-09-25 已落地**：具名字段的可辨识联合，按 `page` 区分（词汇与路由 id、URL 三层一致，见 CONVENTIONS）——
 
-| type | data 的形状 | 组件里怎么取 |
-|---|---|---|
-| `detail` | `[graveid, graveData]` | `const [, graveData] = data` |
-| `list` | `[gravesList, blockBgObj]` | `data[0]` 是列表，`data[1]` 是背景对象 |
-| `home` | `blocks`（直接是数组） | `data` |
-| `list`（出错兜底） | `[]` | 长度对不上，`data[1]` 是 undefined |
-
-目标：改成具名字段的可辨识联合，不用再靠下标记忆——
-
-| type | 字段 |
+| page | 字段 |
 |---|---|
 | `home` | `blocks: GyBlock[]` |
-| `list` | `graves: GraveSummary[]`、`block: GyBlock \| null` |
-| `detail` | `graveID: string`、`grave: GraveDetail \| null` |
+| `block` | `graves: GraveDetail[]`、`block: GyBlock \| null` |
+| `grave` | `graveID: string`、`grave: GraveDetail \| null` |
 
-> 前端目前所有组件 props 都是 `any`（`graveData: any`、`interaction: any`、`favorites: any`）。
-> 建议把以上类型收进 `client/src/types.ts` 统一引用。
+> `graves` 目前是 `GraveDetail[]`，因为列表接口确实返回完整详情；列表瘦身（TODO #21）后收窄成 `GraveSummary[]`。
+> 替换前是元组（`data: [graveID, graveData]` / `[gravesList, blockBgObj]`），出错兜底 `[]` 的长度对不上。
+>
+> 所有类型都在 **`client/src/types.ts`**，组件 props 已无 `any`（仅剩 `ThemeContext.tsx`，随 TODO #25 重写）。
 
 ---
 
@@ -244,7 +237,7 @@
 | 4 | `weight` 和 `blocks` 两个字段表达刷新规则 | ✅ 合并成 **`spawnWeights`** 映射表 |
 | 5 | `GyBlock.number` 会失真 | ✅ **删除**，需要时实时 count |
 | 6 | `totalFlowers` 两处算法不一致 | ✅ 改造后自然消失（统一成 `totalOfferings`，抽同一个函数） |
-| 7 | 路由参数大小写不一、图片字段结构不统一、组件 props 全是 any | 📌 记入 REMINDERS |
+| 7 | 路由参数大小写不一、图片字段结构不统一、组件 props 全是 any | 2026-09-25：路由参数统一为 **`:graveID` / `:blockID`**（PRD **D17**）；props 的 `any` 已由 `types.ts` 替掉；图片字段仍在 REMINDERS #11 |
 
 ---
 
@@ -252,7 +245,7 @@
 
 | 结构 | 改动 |
 |---|---|
-| `User` | ➕`role` ➕`inventory[]` ➕`lastRewardAt` |
+| `User` | ➕`role` ➕`inventory[]` ➕`lastRewardDate` |
 | `Grave` | ➕`icon`（建后不可改） |
 | `Interaction` | `type`→`message`\|`item`；`variety`→`itemName`；`graveId`→`grave_id`；`quantity` 加 default |
 | `GyBlock` | ➖`number`；**不加花相关字段**；图片字段结构待统一 |
@@ -270,7 +263,7 @@
 |---|---|---|
 | 1 | 物品什么时候命名 | **在背包里点专门的按钮命名** —— 不是领取时、也不是献上时。文案「这个神奇的种子最终变成了什么？」 |
 | 2 | 命名可逆吗 | **不可逆**。种子变成什么就是什么 |
-| 3 | 献花 / 献物品接口要不要合并 | **合并**成 `POST /grave/:graveId/offerings` |
+| 3 | 献花 / 献物品接口要不要合并 | **合并**成 `POST /grave/:graveID/offerings` |
 | 4 | 字段叫 `itemname` 还是 `itemName` | **`itemName`**，camelCase 与其它字段一致 |
 | 5 | 每日奖励怎么触发 | **自动发放**。前端启动时自动调 `POST /user/me/daily-reward`，用户不用点 |
 | 6 | 隔几天没来要补发吗 | **只发 1 个**，不按天数累积 |

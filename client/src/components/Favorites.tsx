@@ -1,12 +1,14 @@
-const Favorites = ({ favorites }: { favorites: any }) => {
+import type { FavoriteRef } from '../types';
+
+const Favorites = ({ favorites }: { favorites: FavoriteRef[] }) => {
   console.log(favorites);
   return (
     <div id="favorites">
       <div className="favorites-title">Favorite Places</div>
       <div className="favorites-list">
-        {favorites.map((graveId: any) => (
-          <div className="favorite-item" key={graveId}>
-            {graveId}
+        {favorites.map((grave) => (
+          <div className="favorite-item" key={grave._id}>
+            {grave.name}
           </div>
         ))}
       </div>

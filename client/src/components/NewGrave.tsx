@@ -5,13 +5,15 @@ import { useModal } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import Login from './Login';
 import api from '../api';
+import { isAxiosError } from 'axios';
+import type { GyBlock } from '../types';
 
 const NewGrave = () => {
   const modalHeaderColor = useTheme()?.style?.modalHeaderColor ?? "#8a63a6";
   const { closeModal, openModal } = useModal();
   const { isLoggedIn } = useAuth();
   
-  const [blocks, setBlocks] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<GyBlock[]>([]);
   const [loadingBlocks, setLoadingBlocks] = useState(true);
   
   const [formData, setFormData] = useState({
@@ -68,9 +70,10 @@ const NewGrave = () => {
     try {
       await api.post('/grave', payload);
       setSuccess(true);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to create grave. Detailed error:", err);
-      setError(err.response?.data?.error || "Failed to create grave.");
+      const message = isAxiosError(err) ? err.response?.data?.error : undefined;
+      setError(message || "Failed to create grave.");
     } finally {
       setLoading(false);
     }

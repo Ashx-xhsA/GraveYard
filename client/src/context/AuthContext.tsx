@@ -1,14 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import api from '../api';
-
-interface User {
-  id: string;
-  username: string;
-  email?: string;
-  gravesCreated?: number;
-  interactionsMade?: number;
-}
+import type { CurrentUser as User, MeResponse } from '../types';
 
 interface AuthContextType {
   isRightPanelShow: boolean;
@@ -36,11 +29,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUser = async (): Promise<User | null> => {
     try {
-      const res = await api.get('/user/me');
+      const res = await api.get<MeResponse>('/user/me');
       const userData: User = {
         id: res.data.user.id,
         username: res.data.user.username,
         email: res.data.user.email,
+        role: res.data.user.role,
+        inventory: res.data.user.inventory,
         gravesCreated: res.data.gravesCreated,
         interactionsMade: res.data.interactionsMade,
       };

@@ -2,27 +2,16 @@ import express from "express";
 import Interaction from "../models/Interaction.js";
 import Grave from "../models/Grave.js";
 import { verifyToken } from "../middleware/auth.js";
+import { getGraveStats } from "../lib/graveDetail.js";
 
 const router = express.Router({ mergeParams: true });
-
-const getGraveStats = async (graveObjectId) => {
-  const totalFlowers = await Interaction.countDocuments({
-    graveId: graveObjectId,
-    type: "flower",
-  });
-  const totalMessages = await Interaction.countDocuments({
-    graveId: graveObjectId,
-    type: "message",
-  });
-  return { totalFlowers, totalMessages };
-};
 
 // Get all interactions for a grave
 router.get("/interactions", async (req, res) => {
   try {
-    const grave = await Grave.findOne({ graveID: req.params.graveId });
+    const grave = await Grave.findOne({ graveID: req.params.graveID });
     if (!grave) return res.status(404).json({ error: "Grave not found." });
-    const interactions = await Interaction.find({ graveId: grave._id })
+    const interactions = await Interaction.find({ grave_id: grave._id })
       .sort({ createdAt: -1 })
       .populate("user", "username");
     return res.json(interactions);
@@ -35,13 +24,13 @@ router.get("/interactions", async (req, res) => {
 // Post a flower to a grave
 router.post("/flowers", verifyToken, async (req, res) => {
   try {
-    const { variety, quantity = 1 } = req.body;
-    const grave = await Grave.findOne({ graveID: req.params.graveId });
+    const { itemName, quantity = 1 } = req.body;
+    const grave = await Grave.findOne({ graveID: req.params.graveID });
     if (!grave) return res.status(404).json({ error: "Grave not found." });
     const interaction = new Interaction({
-      graveId: grave._id,
-      type: "flower",
-      variety,
+      grave_id: grave._id,
+      type: "item",
+      itemName,
       user: req.userId,
       quantity,
     });
@@ -63,10 +52,10 @@ router.post("/flowers", verifyToken, async (req, res) => {
 router.post("/messages", verifyToken, async (req, res) => {
   try {
     const { content } = req.body;
-    const grave = await Grave.findOne({ graveID: req.params.graveId });
+    const grave = await Grave.findOne({ graveID: req.params.graveID });
     if (!grave) return res.status(404).json({ error: "Grave not found." });
     const interaction = new Interaction({
-      graveId: grave._id,
+      grave_id: grave._id,
       type: "message",
       user: req.userId,
       content,
@@ -92,7 +81,7 @@ router.delete(
   async (req, res) => {
     try {
       const { interactionId } = req.params;
-      const grave = await Grave.findOne({ graveID: req.params.graveId });
+      const grave = await Grave.findOne({ graveID: req.params.graveID });
       if (!grave) return res.status(404).json({ error: "Grave not found." });
       const interaction = await Interaction.findById(interactionId);
       if (!interaction)
