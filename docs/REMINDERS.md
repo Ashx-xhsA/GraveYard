@@ -13,8 +13,8 @@
 | 2 | **`email` 永远是 undefined** —— `User` schema 里 email 被注释掉了，但 `/user/me` 仍在 `select("email")`，前端 `AuthContext` 也在读 | `models/User.js:12`、`routes/user.js` | 不报错，但是个幽灵字段。要么补回 email，要么把读取一并删掉 |
 | 3 | **`photos` 是数组但只用第一张** | `models/Grave.js`、`GraveInfo.tsx` | 要么支持多图轮播，要么改成单张字段 |
 | 4 | **列表接口返回了用不到的完整互动历史** —— `GET /grave` 里每个墓碑都跑了一次 `populateInteractions()` | `routes/grave.js` | 每翻一页要为每座墓碑多跑一次 Interaction 查询（N+1），传输量也浪费。列表其实只需要 stats |
-| 5 | **`totalFlowers` 有两种算法，会返回不同的数** —— `populateInteractions()` 是 **quantity 求和**，`getGraveStats()` 是 **countDocuments 条数** | `routes/grave.js`、`routes/interaction.js` | A 献 99 朵花：详情页加载显示 **99**，献完花的响应却返回 **1**，**页面数字会跳变**。改造成 `totalOfferings` 时要抽成同一个函数 |
-| 6 | **`user` 字段形状不稳定** —— 有时是 ObjectId，有时被 populate 成 `{_id, username}` | 各路由 | 前端被迫写 `item.user?.username \|\| item.user \|\| 'Unknown'` 兜底。应统一所有对外响应都 populate |
+| 5 | ✅ **2026-09-25 已解决** ~~`totalFlowers` 有两种算法，会返回不同的数 —— `populateInteractions()` 是 quantity 求和，`getGraveStats()` 是 countDocuments 条数~~ | `routes/grave.js`、`routes/interaction.js` | A 献 99 朵花：详情页加载显示 **99**，献完花的响应却返回 **1**，**页面数字会跳变**。改造成 `totalOfferings` 时要抽成同一个函数 |
+| 6 | ✅ **2026-09-25 已解决** ~~`user` 字段形状不稳定 —— 有时是 ObjectId，有时被 populate 成 `{_id, username}`~~ | 各路由 | 前端被迫写 `item.user?.username \|\| item.user \|\| 'Unknown'` 兜底。应统一所有对外响应都 populate |
 | 7 | **PUT 无法清空可选字段** —— `grave.js` 用 `if (field)` 判断，传空字符串会被当成"没传" | `routes/grave.js` | 用户改完墓志铭想清空改不回去 |
 | 8 | **自由文本无长度校验** —— `epitaph`、`memorial`、`content` 等都没有 maxlength | 各 model | 可以塞进任意长的内容 |
 | 9 | **缺 `.env.example`** —— 需要 `MONGO_URI`、`JWT_SECRET`，但仓库里没有样例文件 | 项目根 / `server/` | 新环境上手要靠猜；`JWT_SECRET` 缺失时 `jwt.sign` 直接抛错 |
@@ -23,9 +23,9 @@
 
 | # | 问题 | 位置 | 影响 |
 |---|---|---|---|
-| 10 | **路由参数大小写不一** —— 后端 `:graveId`，前端 React Router `:graveid` / `:blockid` | `app.js`、`App.tsx` | 容易写错，建议统一 |
+| 10 | ✅ **2026-09-25 已解决** ~~路由参数大小写不一 —— 后端 `:graveId`，前端 React Router `:graveid` / `:blockid`~~ | `app.js`、`App.tsx` | 容易写错，建议统一 |
 | 11 | **图片字段结构不统一** —— `backgroundImage` 是 `{url, styles}` 对象，而 `blockIconImage`、`graveIcon`、`photos` 是裸字符串；后缀也不一致（一个带 `Image` 一个不带） | `models/GyBlock.js`、`models/Grave.js` | 建议统一成 `ImageRef = {url, styles?}` |
-| 12 | **前端组件 props 全是 `any`** —— `graveData: any`、`interaction: any`、`favorites: any` | `client/src/components/*` | 类型全靠记忆，改字段名不会报错。建议建 `client/src/types.ts` |
+| 12 | ✅ **2026-09-25 已解决** ~~前端组件 props 全是 `any` —— `graveData: any`、`interaction: any`、`favorites: any`~~ | `client/src/components/*` | 类型全靠记忆，改字段名不会报错。建议建 `client/src/types.ts` |
 
 ## 未完成的界面
 

@@ -62,7 +62,7 @@
 - 花名是**固定品种名**（郁金香 / 百合 / …），来自预设品种表，用户**不能自定义**。
   - ⚠️ 需改造：当前 `flower` 的 `variety` 是任意字符串，要改为**校验 `variety ∈ 预设品种表`**。
   - 品种表放后端常量并导出给前端复用（可选扩展见 D5：不同墓园开不同的花）。
-- **API**：🔁 `POST /api/grave/:graveId/offerings`（由现有 `/flowers` 改造而来，献花和献物品合并为同一个接口），提交时校验品种 + 扣背包（🔴 扣减逻辑要加）。
+- **API**：🔁 `POST /api/grave/:graveID/offerings`（由现有 `/flowers` 改造而来，献花和献物品合并为同一个接口），提交时校验品种 + 扣背包（🔴 扣减逻辑要加）。
 
 ### 1.3 详情页统计 ⚠️ 改造
 - 口径改为「**这里放着 N 个东西**」，N = 所有 `type:"item"` 记录的 `quantity` 总和（花和物品在互动记录里已统一成 `item`，不再区分）。
@@ -95,7 +95,7 @@
 ### 2.3 使用——献上物品
 - 和献花是**同一个操作**：从背包拿 N 个 X 放到墓碑上。
 - **数据模型**：`Interaction.type:"item"`；名字存 `itemName`、数量存 `quantity`。
-- **API**：`POST /api/grave/:graveId/offerings`（与献花共用），提交时从 `inventory` 扣减。
+- **API**：`POST /api/grave/:graveID/offerings`（与献花共用），提交时从 `inventory` 扣减。
 - **前端**：详情页「献上」入口，从背包里选条目 + 选数量。
 
 ---
@@ -115,7 +115,7 @@
 - **角色**：`User.role: "user" | "admin"`，默认 `user`；`verifyToken` 之外加 `requireAdmin` 中间件。
 - **开设新墓园**：`POST /api/blocks`（现在只有 GET）——设 name、blockID、background、默认墓碑 icon。
 - **修改墓园背景/默认图标**：`PUT /api/blocks/:blockID`。
-- **移除任意墓碑**：⚠️ 现在 `DELETE /grave/:graveId` 只放行墓碑本人（非本人 403），需为 admin 加豁免。
+- **移除任意墓碑**：⚠️ 现在 `DELETE /grave/:graveID` 只放行墓碑本人（非本人 403），需为 admin 加豁免。
 - **前端**：一个简单的管理面板（建墓园 / 传背景 / 传默认 icon / 删墓碑）。
 
 ---
@@ -143,14 +143,14 @@
 
 | 方法 | 路径 | 状态 |
 |---|---|---|
-| POST | `/api/grave/:graveId/offerings` | 🔁 由 `/flowers` 改造，**献花和献物品合用**；加品种校验 + 扣背包 |
+| POST | `/api/grave/:graveID/offerings` | 🔁 由 `/flowers` 改造，**献花和献物品合用**；加品种校验 + 扣背包 |
 | POST | `/api/user/me/flowers/collect` | 🔴 新增（地图拾取记账，无防刷） |
 | POST | `/api/user/me/inventory/name` | 🔴 新增（给未命名物品命名） |
 | POST | `/api/user/me/daily-reward` | 🔴 新增（前端启动时自动调，body 带本地日期） |
 | GET | `/api/flower-varieties`（预设品种表） | 🔴 新增（或前后端共享常量） |
 | POST | `/api/blocks`（建墓园，admin） | 🔴 新增 |
 | PUT | `/api/blocks/:blockID`（改背景/默认图，admin） | 🔴 新增 |
-| DELETE | `/api/grave/:graveId`（admin 豁免） | 🟡 改造 |
+| DELETE | `/api/grave/:graveID`（admin 豁免） | 🟡 改造 |
 
 ## 实施优先级 & 依赖顺序（建议）
 
@@ -179,7 +179,7 @@
   - **跨天按前端传的本地日期判定**（`lastRewardDate` 存 `"YYYY-MM-DD"` 字符串），零时区逻辑；可伪造但不防刷。
   - **提示用 toast**，🅿️ 本轮只计划不做，先静默发放。
 - **D8 物品什么时候命名** → ✅ **已定：在背包里点专门的按钮命名**。不是领取时（弹窗打断体验），也不是献上时。文案取一次性转化的语气「这个神奇的种子最终变成了什么？」。命名可指定数量、会拆分堆叠、花不可命名。
-- **D9 献花与献物品的接口** → ✅ **已定：合并**成 `POST /grave/:graveId/offerings`。`Interaction.type` 合并后两者本就是同一个操作——「从背包拿 N 个 X 放到墓碑上」。
+- **D9 献花与献物品的接口** → ✅ **已定：合并**成 `POST /grave/:graveID/offerings`。`Interaction.type` 合并后两者本就是同一个操作——「从背包拿 N 个 X 放到墓碑上」。
 - **D10 字段命名风格** → ✅ **已定**：`variety`→**`itemName`**（camelCase，与其它字段一致）；`graveId`→**`grave_id`**（唯一的下划线例外，因为它存的就是 `_id`）。
 
 - **D11 命名是否可逆** → ✅ **已定：不可逆**。种子变成什么就是什么，可改名会削弱这个动作的仪式感。
@@ -222,6 +222,12 @@
   - **透明变体用 `color-mix`**：如 hover 底色 `color-mix(in srgb, var(--color-accent) 10%, transparent)`，这样它会跟着主色走；写死 `rgba(119,89,114,0.1)` 的话换主色时会掉队。
   - **2026-09-19 已落地**（纯重构，逐个变量比对过，29 个解析后取值完全一致）。主题注入那一半仍属 **#25**。
   - 与 **D14** 的关系：D14 定「值从哪来」（DB → `setProperty` → CSS 兜底），D16 定「主题该存哪些值」（只存调色盘）。
+
+- **D17 路由参数命名：与被比对的字段同名**（2026-09-25 新增） → ✅ **已定**：`:graveID`、`:blockID`（前端 React Router 与后端 Express 一致）。
+  - **问题**：后端用 `:graveId`，前端用 `:graveid` / `:blockid`，而 `blocks.js` 又是 `:blockID`——三种写法并存（TODO #12）。
+  - **理由**：参数里装的是 `"grave-1"` 这种**业务 ID**，后端拿它去 `findOne({ graveID })`。D10 刚为了让业务 ID `graveID` 与外键拉开距离把外键改成 `grave_id`；若参数叫 `graveId`，又会造出一个只差一个字母、含义却是业务 ID 的名字。
+  - **影响**：参数名只是代码里的变量名，浏览器 URL 一个字符都不变，旧链接与书签照常可用。
+  - 本文与 DATA-MODEL / ROADMAP / TODO 正文里的 `:graveId` 已同步改名；附录 A 是 2026-09-17 的现状快照，保留原样。
 
 ## 待定决策
 
