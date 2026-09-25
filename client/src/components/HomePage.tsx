@@ -1,14 +1,8 @@
 import { Link } from 'react-router-dom';
-
-interface Block {
-  blockID: string;
-  name: string;
-  blockIconImage: string;
-  description: string;
-}
+import type { GyBlock } from '../types';
 
 interface HomePageProps {
-  blocks: Block[];
+  blocks: GyBlock[];
 }
 
 const HomePage = ({ blocks }: HomePageProps) => {

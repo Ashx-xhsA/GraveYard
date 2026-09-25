@@ -1,17 +1,8 @@
 import { Link } from 'react-router-dom';
+import type { GraveDetail } from '../types';
 
 interface GraveIconProps {
-  graveData: {
-    block:any;
-    _id: string;
-    graveID: string;
-    name?: string;
-    birth?: string;
-    death?: string;
-    epitaph?: string;
-    photos?: string[];
-    memorial?: string;
-  };
+  graveData: Pick<GraveDetail, 'graveID' | 'name' | 'block'>;
 }
 
 const GraveIcon = ({ graveData }: GraveIconProps) => {
