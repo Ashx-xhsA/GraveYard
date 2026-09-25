@@ -7,6 +7,7 @@ import Grave from "./src/models/Grave.js";
 import GyBlock from "./src/models/GyBlock.js";
 import Interaction from "./src/models/Interaction.js";
 import Theme from "./src/models/Theme.js";
+import { initialInventory } from "./src/lib/inventory.js";
 
 // 显式指向 server/.env —— 否则 `npm run seed`（从项目根跑）会去找根目录的 .env（不存在）
 dotenv.config({
@@ -19,7 +20,11 @@ console.log("Connected to MongoDB");
 // Create test user
 let user = await User.findOne({ username: "testuser" });
 if (!user) {
-  user = new User({ username: "testuser", password: "testpass123" });
+  user = new User({
+    username: "testuser",
+    password: "testpass123",
+    inventory: initialInventory(),
+  });
   await user.save();
   console.log("Created test user:", user.username);
 } else {
