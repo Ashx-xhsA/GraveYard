@@ -2,6 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
+import { initialInventory } from "../lib/inventory.js";
 
 const router = express.Router();
 
@@ -9,7 +10,11 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = new User({ username, password });
+    const user = new User({
+      username,
+      password,
+      inventory: initialInventory(),
+    });
     await user.save();
     return res.status(201).json({ message: "User registered successfully." });
   } catch (error) {

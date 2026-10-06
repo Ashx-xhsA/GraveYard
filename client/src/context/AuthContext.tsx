@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import api from '../api';
-import type { CurrentUser as User, MeResponse } from '../types';
+import type { CurrentUser as User, InventoryEntry, MeResponse } from '../types';
 
 interface AuthContextType {
   isRightPanelShow: boolean;
@@ -12,6 +12,8 @@ interface AuthContextType {
   register: (username: string, password: string) => Promise<void>;
   logout: () => void;
   fetchUser: () => Promise<User | null>;
+  /** Replaces the inventory with one returned by the server, without refetching the user. */
+  setInventory: (inventory: InventoryEntry[]) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,6 +47,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       return null;
     }
+  };
+
+  const setInventory = (inventory: InventoryEntry[]) => {
+    setUser((current) => (current ? { ...current, inventory } : current));
   };
 
   const login = async (username: string, password: string) => {
@@ -83,6 +89,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         logout,
         fetchUser,
+        setInventory,
       }}
     >
       {children}
