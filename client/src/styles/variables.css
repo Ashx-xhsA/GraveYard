@@ -106,6 +106,12 @@
   --interaction-paginate-link-selected-color: var(--color-light);
   --interaction-paginate-link-selected-background-color: var(--color-accent);
 
+  --toast-text-color: var(--color-accent);
+  --toast-background-color: var(--color-accent-soft);
+  --toast-border-color: var(--color-accent);
+  --toast-error-text-color: var(--color-light);
+  --toast-error-background-color: var(--color-accent);
+
   /* Numbers */
   --items-per-page: 10;
 }

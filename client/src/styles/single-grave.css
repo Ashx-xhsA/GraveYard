@@ -143,6 +143,26 @@
   margin-bottom: 1rem;
   color: var(--interaction-item-text-color);
 }
+.interaction-stats-breakdown {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.interaction-actions {
+  width: 70%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.interaction-login-link {
+  color: var(--interaction-item-text-color);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.interaction-login-link:hover {
+  color: var(--interaction-paginate-link-hover-color);
+}
 
 .interaction-pagination {
   display: flex;

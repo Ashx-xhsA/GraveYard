@@ -122,6 +122,29 @@ export interface InventoryEntry {
   count: number;
 }
 
+/** Body of `POST /grave/:graveID/offerings`. */
+export interface OfferingRequest {
+  kind: InventoryEntry['kind'];
+  itemName: string;
+  quantity: number;
+}
+
+/** Response of `POST /grave/:graveID/offerings`. */
+export interface OfferingResponse {
+  message: string;
+  interaction: ItemInteraction;
+  graveStats: GraveStats;
+  /** The user's inventory after the offering was taken from it. */
+  inventory: InventoryEntry[];
+}
+
+/** Response of `POST /grave/:graveID/messages`. */
+export interface MessageResponse {
+  message: string;
+  interaction: MessageInteraction;
+  graveStats: GraveStats;
+}
+
 export type UserRole = 'user' | 'admin';
 
 /** Response of `GET /user/me`. */
