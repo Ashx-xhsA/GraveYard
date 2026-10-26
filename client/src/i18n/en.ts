@@ -39,6 +39,15 @@ export const en = {
     submitting: 'Sending…',
     success: 'Your message has been left.',
   },
+  photo: {
+    label: 'Photo',
+    choose: 'Choose a photo',
+    remove: 'Remove',
+    hint: 'JPEG, PNG or WebP, up to 10 MB',
+    uploading: (percent: number) => `Uploading ${percent}%`,
+    creating: 'Creating…',
+    uploadFailed: 'The photo could not be uploaded. Please try again.',
+  },
   common: {
     cancel: 'Cancel',
     dismiss: 'Dismiss',
@@ -53,6 +62,12 @@ export const en = {
     INSUFFICIENT_QUANTITY: 'You do not have that many.',
     GRAVE_NOT_FOUND: 'This grave no longer exists.',
     EMPTY_MESSAGE: 'The message cannot be empty.',
+    UNSUPPORTED_FILE_TYPE: 'Please choose a JPEG, PNG or WebP image.',
+    FILE_TOO_LARGE: 'The photo must be 10 MB or smaller.',
+    INVALID_UPLOAD: 'That file cannot be uploaded.',
+    UPLOAD_NOT_FOUND: 'The upload expired. Please choose the photo again.',
+    UPLOAD_FORBIDDEN: 'That upload cannot be used.',
+    INVALID_IMAGE: 'That file is not a valid image.',
     generic: 'Something went wrong. Please try again.',
   } as Record<string, string> & { generic: string },
 };

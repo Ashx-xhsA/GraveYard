@@ -4,6 +4,7 @@ import Interaction from "../models/Interaction.js";
 import GyBlock from "../models/GyBlock.js";
 import { verifyToken } from "../middleware/auth.js";
 import { buildGraveDetail } from "../lib/graveDetail.js";
+import { processPendingPhoto, deletePhotos, StorageError } from "../lib/storage.js";
 
 const router = express.Router();
 
@@ -78,12 +79,25 @@ const generateGraveID = async () => {
 // Post a new grave
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const { name, birth, death, epitaph, burial, memorial, photos, icon, block } =
+    // Photos are only accepted as an uploaded `photoKey`, never as a raw URL,
+    // so every stored photo has passed server-side verification.
+    const { name, birth, death, epitaph, burial, memorial, photoKey, icon, block } =
       req.body;
     if (!name || !birth || !death || !block) {
       return res
         .status(400)
         .json({ error: "Please fill out the required data for your grave." });
+    }
+    let photos = [];
+    if (photoKey) {
+      try {
+        photos = [await processPendingPhoto(req.userId, photoKey)];
+      } catch (error) {
+        if (error instanceof StorageError) {
+          return res.status(error.status).json({ error: error.message, code: error.code });
+        }
+        throw error;
+      }
     }
     const graveID = await generateGraveID();
     const grave = new Grave({
@@ -94,12 +108,18 @@ router.post("/", verifyToken, async (req, res) => {
       epitaph,
       burial,
       memorial,
-      photos: photos || [],
+      photos,
       icon,
       block,
       user: req.userId,
     });
-    await grave.save();
+    try {
+      await grave.save();
+    } catch (error) {
+      // Do not leave a published photo behind that no grave refers to.
+      await deletePhotos(photos);
+      throw error;
+    }
     return res.status(201).json(await buildGraveDetail(grave));
   } catch (error) {
     console.error(error);
@@ -118,7 +138,8 @@ router.put("/:graveID", verifyToken, async (req, res) => {
       return res.status(403).json({ error: "This is someone else's grave." });
     }
     // `icon` is intentionally not updatable: it is fixed when the grave is created.
-    const { name, birth, death, epitaph, burial, memorial, photos, block } =
+    // `photos` is not updatable here either: photos must go through the upload flow.
+    const { name, birth, death, epitaph, burial, memorial, block } =
       req.body;
     if (name) grave.name = name;
     if (birth) grave.birth = birth;
@@ -126,7 +147,6 @@ router.put("/:graveID", verifyToken, async (req, res) => {
     if (epitaph) grave.epitaph = epitaph;
     if (burial) grave.burial = burial;
     if (memorial) grave.memorial = memorial;
-    if (photos) grave.photos = photos;
     if (block) grave.block = block;
     await grave.save();
     return res.json(await buildGraveDetail(grave));
@@ -149,6 +169,7 @@ router.delete("/:graveID", verifyToken, async (req, res) => {
     await Interaction.deleteMany({ grave_id: grave._id });
     await grave.populate([{ path: "user", select: "username" }, { path: "block" }]);
     await grave.deleteOne();
+    await deletePhotos(grave.photos);
     return res.json({ message: "Your grave has been removed.", grave });
   } catch (error) {
     console.error(error);

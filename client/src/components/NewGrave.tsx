@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import type { ChangeEvent } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useModal } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
@@ -7,8 +8,14 @@ import Login from './Login';
 import api from '../api';
 import { isAxiosError } from 'axios';
 import type { GyBlock } from '../types';
+import { errorText, useT } from '../i18n';
+import { ACCEPTED_PHOTO_TYPES, MAX_PHOTO_BYTES, uploadPhoto } from '../lib/upload';
+
+// True when the API answered with a stable error `code` that the dictionary can translate.
+const hasErrorCode = (err: unknown) => isAxiosError(err) && typeof err.response?.data?.code === 'string';
 
 const NewGrave = () => {
+  const t = useT();
   const modalHeaderColor = useTheme()?.style?.modalHeaderColor ?? "#8a63a6";
   const { closeModal, openModal } = useModal();
   const { isLoggedIn } = useAuth();
@@ -23,8 +30,11 @@ const NewGrave = () => {
     block: '',
     epitaph: '',
     memorial: '',
-    photo: ''
   });
+  // The chosen file and a local object URL used to preview it before upload.
+  const [photo, setPhoto] = useState<{ file: File; previewUrl: string } | null>(null);
+  // Upload percentage while the photo is being sent; null otherwise.
+  const [progress, setProgress] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -47,6 +57,30 @@ const NewGrave = () => {
     fetchBlocks();
   }, []);
 
+  // Release the preview URL when the photo is replaced, removed, or the form unmounts.
+  useEffect(() => {
+    if (!photo) return;
+    return () => URL.revokeObjectURL(photo.previewUrl);
+  }, [photo]);
+
+  const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    // Reset so choosing the same file again still fires a change event.
+    e.target.value = '';
+    if (!file) return;
+    // Checked here only to fail fast; S3 and the server enforce the same limits.
+    if (!ACCEPTED_PHOTO_TYPES.includes(file.type)) {
+      setError(t.errors.UNSUPPORTED_FILE_TYPE);
+      return;
+    }
+    if (file.size > MAX_PHOTO_BYTES) {
+      setError(t.errors.FILE_TOO_LARGE);
+      return;
+    }
+    setError('');
+    setPhoto({ file, previewUrl: URL.createObjectURL(file) });
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -64,16 +98,29 @@ const NewGrave = () => {
       block: formData.block,
       epitaph: formData.epitaph,
       memorial: formData.memorial,
-      photos: formData.photo ? [formData.photo] : [],
     };
 
     try {
-      await api.post('/grave', payload);
+      // The photo is uploaded only on submit, so changing it beforehand leaves nothing behind.
+      let photoKey: string | undefined;
+      if (photo) {
+        setProgress(0);
+        try {
+          photoKey = await uploadPhoto(photo.file, setProgress);
+        } catch (err) {
+          console.error("Failed to upload photo:", err);
+          setError(hasErrorCode(err) ? errorText(t, err) : t.photo.uploadFailed);
+          return;
+        } finally {
+          setProgress(null);
+        }
+      }
+      await api.post('/grave', { ...payload, photoKey });
       setSuccess(true);
     } catch (err) {
       console.error("Failed to create grave. Detailed error:", err);
       const message = isAxiosError(err) ? err.response?.data?.error : undefined;
-      setError(message || "Failed to create grave.");
+      setError(hasErrorCode(err) ? errorText(t, err) : message || "Failed to create grave.");
     } finally {
       setLoading(false);
     }
@@ -215,15 +262,37 @@ const NewGrave = () => {
           />
         </div>
 
-        <div className="flex items-center justify-between gap-8" style={{ color: modalHeaderColor }}>
-          <label className="text-xl font-bold whitespace-nowrap" htmlFor="photo">Photo URL</label>
-          <input
-            id="photo" name="photo" type="url"
-            value={formData.photo} onChange={handleChange}
-            placeholder="https://..."
-            className="w-1/2 md:w-auto max-w-[50%] p-2 text-lg font-bold outline-none transition-colors bg-transparent border-[3px] rounded-md text-gray-800 text-left"
-            style={{ borderColor: modalHeaderColor }}
-          />
+        <div className="flex items-start justify-between gap-8" style={{ color: modalHeaderColor }}>
+          <span className="text-xl font-bold whitespace-nowrap mt-2">{t.photo.label}</span>
+          <div className="flex flex-col items-center gap-2 w-1/2 max-w-[50%]">
+            {photo ? (
+              <>
+                <img src={photo.previewUrl} alt="" className="max-h-40 max-w-full rounded-md object-contain" />
+                <button
+                  type="button"
+                  onClick={() => setPhoto(null)}
+                  disabled={loading}
+                  className="text-sm font-bold underline"
+                >
+                  {t.photo.remove}
+                </button>
+              </>
+            ) : (
+              <label
+                htmlFor="photo"
+                className="w-full p-2 text-lg font-bold text-center cursor-pointer border-[3px] rounded-md text-gray-800"
+                style={{ borderColor: modalHeaderColor }}
+              >
+                {t.photo.choose}
+              </label>
+            )}
+            <input
+              id="photo" type="file" className="hidden"
+              accept={ACCEPTED_PHOTO_TYPES.join(',')}
+              onChange={handlePhotoChange}
+            />
+            <span className="text-xs text-gray-600 text-center">{t.photo.hint}</span>
+          </div>
         </div>
 
         <button
@@ -231,7 +300,7 @@ const NewGrave = () => {
           className="header-icon-button inline-block self-center px-6 py-3 mt-6 text-xl font-bold"
           disabled={loading || loadingBlocks}
         >
-          {loading ? 'Creating...' : 'Create Grave'}
+          {progress !== null ? t.photo.uploading(progress) : loading ? t.photo.creating : 'Create Grave'}
         </button>
       </form>
     </div>

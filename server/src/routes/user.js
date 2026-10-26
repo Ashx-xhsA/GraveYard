@@ -5,6 +5,7 @@ import Interaction from "../models/Interaction.js";
 import Theme from "../models/Theme.js";
 import { verifyToken } from "../middleware/auth.js";
 import { buildGraveDetail } from "../lib/graveDetail.js";
+import { deletePhotos } from "../lib/storage.js";
 
 const router = express.Router();
 
@@ -116,6 +117,7 @@ router.delete("/me", verifyToken, async (req, res) => {
     await Grave.deleteMany({ user: userId });
     await Interaction.deleteMany({ user: userId });
     await User.deleteOne({ _id: userId });
+    await deletePhotos(graves.flatMap((grave) => grave.photos));
     return res.json({
       message: "User account and all associated data have been deleted.",
     });

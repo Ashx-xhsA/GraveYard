@@ -7,6 +7,7 @@ import interactionRoutes from "./routes/interaction.js";
 import userRoutes from "./routes/user.js";
 import blockRoutes from "./routes/blocks.js";
 import themeRoutes from "./routes/theme.js";
+import uploadRoutes from "./routes/upload.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +23,7 @@ app.use("/api/grave/:graveID", interactionRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/blocks", blockRoutes);
 app.use("/api/theme", themeRoutes);
+app.use("/api/uploads", uploadRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
