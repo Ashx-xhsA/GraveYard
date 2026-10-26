@@ -72,7 +72,7 @@ const GraveInfo = () => {
       {/* grave information container */}
       <div id="grave-info-container">
         <div id="grave-info-img-container">
-          {photos && photos[0] && <img src={photos[0]} alt={name} />}
+          {photos && photos[0] && <img src={photos[0].url} alt={name} />}
         </div>
         <div id="grave-title-container">
           <h1>{name}</h1>

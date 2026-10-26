@@ -66,6 +66,14 @@ export interface GraveStats {
   byName: { name: string; count: number }[];
 }
 
+/** A photo of the deceased. */
+export interface Photo {
+  /** Public URL of the image. */
+  url: string;
+  /** Storage key; empty for legacy photos that point at external URLs. */
+  key: string;
+}
+
 /** Fields stored on the grave document itself. */
 export interface Grave {
   _id: string;
@@ -78,7 +86,7 @@ export interface Grave {
   epitaph?: string;
   memorial?: string;
   burial?: { display_name?: string; address?: string };
-  photos?: string[];
+  photos?: Photo[];
   /** Custom grave sprite; empty when the block's default should be used. */
   icon: string;
   createdAt: string;

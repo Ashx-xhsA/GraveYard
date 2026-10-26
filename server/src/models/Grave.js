@@ -32,7 +32,16 @@ const graveSchema = new mongoose.Schema(
       address: String,
     },
     memorial: String,
-    photos: [String],
+    // Only one photo is supported for now; kept as an array so multiple photos need no migration.
+    photos: [
+      {
+        _id: false,
+        // Public URL of the image.
+        url: String,
+        // S3 object key; empty for legacy photos that point at external URLs.
+        key: { type: String, default: "" },
+      },
+    ],
     // Custom grave sprite chosen at creation. Cannot be changed afterwards.
     icon: { type: String, default: "" },
     // Interaction
